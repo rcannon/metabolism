@@ -1,0 +1,13 @@
+eigen is lazy.
+    - use .eval() to force strict evaluation of RHS.
+    - this is particularly important for aliasing.
+    - HOWEVER, component-wise operations are safe regardless
+        and don't require forced evaluation.
+        - "In general, an assignment is safe if the (i,j) 
+            entry of the expression on the right-hand side 
+            depends only on the (i,j) entry of the matrix or 
+            array on the left-hand side and not on any other entries"
+
+eigen in general does not perform operations in-place.
+    - when an in-place alternative for func() exist, 
+        it is usually called funcInPlace().
