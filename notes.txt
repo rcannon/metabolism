@@ -11,3 +11,14 @@ eigen is lazy.
 eigen in general does not perform operations in-place.
     - when an in-place alternative for func() exist, 
         it is usually called funcInPlace().
+
+
+eigen matrix.reshaped() or .resize()?
+    resize changes the matrix in place,
+        whereas reshaped returns a new matrix.
+    no way to specify coefficient order for resize.
+    *resizing (both increasing and decreasing total 
+        number of coefficients) will delete the current
+        coefficients (replace with zeros) UNLESS the 
+        total number of coefficients is unchanged.
+    

@@ -11,8 +11,6 @@
 #ifndef EIGEN_GENERIC_PACKET_MATH_H
 #define EIGEN_GENERIC_PACKET_MATH_H
 
-#include "./InternalHeaderCheck.h"
-
 namespace Eigen {
 
 namespace internal {
@@ -65,7 +63,6 @@ struct default_packet_traits
     HasCmp       = 0,
 
     HasDiv    = 0,
-    HasReciprocal = 0,
     HasSqrt   = 0,
     HasRsqrt  = 0,
     HasExp    = 0,
@@ -163,7 +160,7 @@ struct eigen_packet_wrapper
 {
   EIGEN_ALWAYS_INLINE operator T&() { return m_val; }
   EIGEN_ALWAYS_INLINE operator const T&() const { return m_val; }
-  EIGEN_ALWAYS_INLINE eigen_packet_wrapper() = default;
+  EIGEN_ALWAYS_INLINE eigen_packet_wrapper() {}
   EIGEN_ALWAYS_INLINE eigen_packet_wrapper(const T &v) : m_val(v) {}
   EIGEN_ALWAYS_INLINE eigen_packet_wrapper& operator=(const T &v) {
     m_val = v;
@@ -817,6 +814,13 @@ Packet plog2(const Packet& a) {
 template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
 Packet psqrt(const Packet& a) { return numext::sqrt(a); }
 
+/** \internal \returns the reciprocal square-root of \a a (coeff-wise) */
+template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
+Packet prsqrt(const Packet& a) {
+  typedef typename internal::unpacket_traits<Packet>::type Scalar;
+  return pdiv(pset1<Packet>(Scalar(1)), psqrt(a));
+}
+
 /** \internal \returns the rounded value of \a a (coeff-wise) */
 template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
 Packet pround(const Packet& a) { using numext::round; return round(a); }
@@ -939,35 +943,6 @@ template<typename Packet> EIGEN_DEVICE_FUNC inline bool predux_any(const Packet&
 * The following functions might not have to be overwritten for vectorized types
 ***************************************************************************/
 
-// FMA instructions.
-/** \internal \returns a * b + c (coeff-wise) */
-template <typename Packet>
-EIGEN_DEVICE_FUNC inline Packet pmadd(const Packet& a, const Packet& b,
-                                      const Packet& c) {
-  return padd(pmul(a, b), c);
-}
-
-/** \internal \returns a * b - c (coeff-wise) */
-template <typename Packet>
-EIGEN_DEVICE_FUNC inline Packet pmsub(const Packet& a, const Packet& b,
-                                      const Packet& c) {
-  return psub(pmul(a, b), c);
-}
-
-/** \internal \returns -(a * b) + c (coeff-wise) */
-template <typename Packet>
-EIGEN_DEVICE_FUNC inline Packet pnmadd(const Packet& a, const Packet& b,
-                                       const Packet& c) {
-  return padd(pnegate(pmul(a, b)), c);
-}
-
-/** \internal \returns -(a * b) - c (coeff-wise) */
-template <typename Packet>
-EIGEN_DEVICE_FUNC inline Packet pnmsub(const Packet& a, const Packet& b,
-                                       const Packet& c) {
-  return psub(pnegate(pmul(a, b)), c);
-}
-
 /** \internal copy a packet with constant coefficient \a a (e.g., [a,a,a,a]) to \a *to. \a to must be 16 bytes aligned */
 // NOTE: this function must really be templated on the packet type (think about different packet types for the same scalar type)
 template<typename Packet>
@@ -975,6 +950,13 @@ inline void pstore1(typename unpacket_traits<Packet>::type* to, const typename u
 {
   pstore(to, pset1<Packet>(a));
 }
+
+/** \internal \returns a * b + c (coeff-wise) */
+template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
+pmadd(const Packet&  a,
+         const Packet&  b,
+         const Packet&  c)
+{ return padd(pmul(a, b),c); }
 
 /** \internal \returns a packet version of \a *from.
   * The pointer \a from must be aligned on a \a Alignment bytes boundary. */
@@ -1049,19 +1031,6 @@ template <size_t N> struct Selector {
 template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
 pblend(const Selector<unpacket_traits<Packet>::size>& ifPacket, const Packet& thenPacket, const Packet& elsePacket) {
   return ifPacket.select[0] ? thenPacket : elsePacket;
-}
-
-/** \internal \returns 1 / a (coeff-wise) */
-template <typename Packet>
-EIGEN_DEVICE_FUNC inline Packet preciprocal(const Packet& a) {
-  using Scalar = typename unpacket_traits<Packet>::type;
-  return pdiv(pset1<Packet>(Scalar(1)), a);
-}
-
-/** \internal \returns the reciprocal square-root of \a a (coeff-wise) */
-template<typename Packet> EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
-Packet prsqrt(const Packet& a) {
-  return preciprocal<Packet>(psqrt(a));
 }
 
 } // end namespace internal

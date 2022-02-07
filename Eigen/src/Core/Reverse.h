@@ -12,8 +12,6 @@
 #ifndef EIGEN_REVERSE_H
 #define EIGEN_REVERSE_H
 
-#include "./InternalHeaderCheck.h"
-
 namespace Eigen {
 
 namespace internal {
@@ -26,13 +24,13 @@ struct traits<Reverse<MatrixType, Direction> >
   typedef typename traits<MatrixType>::StorageKind StorageKind;
   typedef typename traits<MatrixType>::XprKind XprKind;
   typedef typename ref_selector<MatrixType>::type MatrixTypeNested;
-  typedef typename remove_reference<MatrixTypeNested>::type MatrixTypeNested_;
+  typedef typename remove_reference<MatrixTypeNested>::type _MatrixTypeNested;
   enum {
     RowsAtCompileTime = MatrixType::RowsAtCompileTime,
     ColsAtCompileTime = MatrixType::ColsAtCompileTime,
     MaxRowsAtCompileTime = MatrixType::MaxRowsAtCompileTime,
     MaxColsAtCompileTime = MatrixType::MaxColsAtCompileTime,
-    Flags = MatrixTypeNested_::Flags & (RowMajorBit | LvalueBit)
+    Flags = _MatrixTypeNested::Flags & (RowMajorBit | LvalueBit)
   };
 };
 
@@ -175,10 +173,10 @@ struct vectorwise_reverse_inplace_impl<Vertical>
   template<typename ExpressionType>
   static void run(ExpressionType &xpr)
   {
-    constexpr Index HalfAtCompileTime = ExpressionType::RowsAtCompileTime==Dynamic?Dynamic:ExpressionType::RowsAtCompileTime/2;
+    const int HalfAtCompileTime = ExpressionType::RowsAtCompileTime==Dynamic?Dynamic:ExpressionType::RowsAtCompileTime/2;
     Index half = xpr.rows()/2;
-    xpr.template topRows<HalfAtCompileTime>(half)
-       .swap(xpr.template bottomRows<HalfAtCompileTime>(half).colwise().reverse());
+    xpr.topRows(fix<HalfAtCompileTime>(half))
+       .swap(xpr.bottomRows(fix<HalfAtCompileTime>(half)).colwise().reverse());
   }
 };
 
@@ -188,10 +186,10 @@ struct vectorwise_reverse_inplace_impl<Horizontal>
   template<typename ExpressionType>
   static void run(ExpressionType &xpr)
   {
-    constexpr Index HalfAtCompileTime = ExpressionType::ColsAtCompileTime==Dynamic?Dynamic:ExpressionType::ColsAtCompileTime/2;
+    const int HalfAtCompileTime = ExpressionType::ColsAtCompileTime==Dynamic?Dynamic:ExpressionType::ColsAtCompileTime/2;
     Index half = xpr.cols()/2;
-    xpr.template leftCols<HalfAtCompileTime>(half)
-       .swap(xpr.template rightCols<HalfAtCompileTime>(half).rowwise().reverse());
+    xpr.leftCols(fix<HalfAtCompileTime>(half))
+       .swap(xpr.rightCols(fix<HalfAtCompileTime>(half)).rowwise().reverse());
   }
 };
 
