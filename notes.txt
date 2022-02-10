@@ -1,3 +1,6 @@
+
+matrix_t A = B; performs a deep copy of B into A.
+
 eigen is lazy.
     - use .eval() to force strict evaluation of RHS.
     - this is particularly important for aliasing.
@@ -21,4 +24,10 @@ eigen matrix.reshaped() or .resize()?
         number of coefficients) will delete the current
         coefficients (replace with zeros) UNLESS the 
         total number of coefficients is unchanged.
+
+matrix types only support linear -algebra operations, for 
+    component wise operations, one must first call the matrix.array()
+    to convert the matrix to an array.
+    At the end of the operations, one then must call .matrix() 
+    to convert the array back into a mtraix.
     

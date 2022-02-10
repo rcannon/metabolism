@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <numeric>
+#include <math.h>
 
 #include "Eigen/Core"
 #include "Eigen/Dense"
@@ -14,7 +15,8 @@ typedef std::vector<size_t> index_list_t;
 typedef Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
 
 
-/* TODO: reshape or resize? */
+/* TODO: might need to change def of value_t, so to ensure
+safe numerical computation  */
 
 Max_ent_solver_return_type /* TODO: specify the type */
 max_ent_solver( 
@@ -34,8 +36,8 @@ max_ent_solver(
     size_t n_react = S.cols(); /* should be same as numpy.shape(S)[1] */
 
     /* Set the System Parameters */
-    FxdM = f_log_counts.reshaped<RowMajor>();
-    matrix_t K_eq = K.reshaped<RowMajor>;
+    FxdM = f_log_counts.reshaped<Eigen::RowMajor>();
+    matrix_t K_eq = K.reshaped<Eigen::RowMajor>;
 
     /* Metabloite params */
     size_t n_M_f = f_log_counts.size();
@@ -93,11 +95,19 @@ max_ent_solver(
 
     matrix_t b_ini  = (S_v_T * n_ini.reshaped<RowMajor>()) 
                     + (S_f_T * FxdM.reshaped<RowMajor>() );
-    
     /* Reilly: need to call .eval to avoid memory issues due to aliasing */
     b_ini = b_ini.reshaped<RowMajor>().eval();
 
-    /* TODO: line 83 */
+    value_t h_ini = std::log(2) 
+                  - std::log( std:abs(y_ini) 
+                            + std:sqrt( std:pow(y_ini, 2) + 4)   
+                            );
+    if (std::signbit(y_ini)) { h_ini = - h_ini; }
+
+    /* TODO: IPOPT starting on line 86 */
+
+
+
 
 
     
