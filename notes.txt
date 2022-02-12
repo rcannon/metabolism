@@ -1,6 +1,8 @@
 
 matrix_t A = B; performs a deep copy of B into A.
 
+numpy array operation * is elementwise
+
 eigen is lazy.
     - use .eval() to force strict evaluation of RHS.
     - this is particularly important for aliasing.

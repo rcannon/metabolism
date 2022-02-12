@@ -37,7 +37,7 @@ max_ent_solver(
 
     /* Set the System Parameters */
     FxdM = f_log_counts.reshaped<Eigen::RowMajor>();
-    matrix_t K_eq = K.reshaped<Eigen::RowMajor>;
+    matrix_t K_eq = K.reshaped<Eigen::RowMajor>();
 
     /* Metabloite params */
     size_t n_M_f = f_log_counts.size();
@@ -107,10 +107,17 @@ max_ent_solver(
     /* TODO: IPOPT starting on line 86 */
 
 
-
-
-
-    
 }
   
 
+matrix_t
+rxn_flux
+    ( matrix_t v_log_counts
+    , matrix_t f_log_counts
+    , matrix_t S
+    , matrix_t K
+    , matrix_t E_regulation
+    )
+{
+    /* TODO */
+}
