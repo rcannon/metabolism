@@ -19,16 +19,16 @@ typedef Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
 safe numerical computation  */
 
 Max_ent_solver_return_type /* TODO: specify the type */
-max_ent_solver( 
-    matrix_t n_ini,  /* TODO: figure out types */
-    value_t y_ini,
-    value_t beta_ini,
-    size_t target_log_vcounts,
-    matrix_t f_log_counts,
-    matrix_t S,
-    matrix_t K,
-    size_t obj_rxn_idx
-)
+max_ent_solver
+    ( matrix_t n_ini
+    , value_t y_ini
+    , value_t beta_ini
+    , value_list_t target_log_vcounts
+    , matrix_t f_log_counts
+    , matrix_t S
+    , matrix_t K
+    , size_t obj_rxn_idx
+    )
 {
     /* Flip Stoichiometric Matrix */
     matrix_t S_T = S; /* this should do deep copy */
@@ -36,7 +36,7 @@ max_ent_solver(
     size_t n_react = S.cols(); /* should be same as numpy.shape(S)[1] */
 
     /* Set the System Parameters */
-    FxdM = f_log_counts.reshaped<Eigen::RowMajor>();
+    matrix_t FxdM = f_log_counts.reshaped<Eigen::RowMajor>();
     matrix_t K_eq = K.reshaped<Eigen::RowMajor>();
 
     /* Metabloite params */
@@ -93,16 +93,19 @@ max_ent_solver(
 
     /* Set the initial condition */
 
-    matrix_t b_ini  = (S_v_T * n_ini.reshaped<RowMajor>()) 
-                    + (S_f_T * FxdM.reshaped<RowMajor>() );
+    matrix_t b_ini  = (S_v_T * n_ini.reshaped<Eigen::RowMajor>()) 
+                    + (S_f_T * FxdM.reshaped<Eigen::RowMajor>() );
     /* Reilly: need to call .eval to avoid memory issues due to aliasing */
-    b_ini = b_ini.reshaped<RowMajor>().eval();
+    b_ini = b_ini.reshaped<Eigen::RowMajor>().eval();
 
     value_t h_ini = std::log(2) 
-                  - std::log( std:abs(y_ini) 
-                            + std:sqrt( std:pow(y_ini, 2) + 4)   
+                  - std::log( std::abs(y_ini) 
+                            + std::sqrt( std::pow(y_ini, 2) + 4)   
                             );
     if (std::signbit(y_ini)) { h_ini = - h_ini; }
+
+    value_t VarM_lbnd = -300;
+    
 
     /* TODO: IPOPT starting on line 86 */
 

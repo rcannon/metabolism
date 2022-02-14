@@ -90,7 +90,7 @@ rxn_flux
 feasible_point_solver_return_type
 Feasible_point_solver
     ( matrix_t v_log_counts
-    , matrix_t target_log_vcounts
+    , value_list_t target_log_vcounts
     , matrix_t f_log_counts
     , matrix_t S
     , matrix_t K
@@ -266,7 +266,7 @@ Eq_lobj
 Random_Feasible_Point_solver_return_type
 Random_Feasible_Point_solver
     ( matrix_t v_log_counts
-    , matrix_t target_log_vcounts
+    , value_list_t target_log_vcounts
     , matrix_t f_log_counts
     , matrix_t S
     , matrix_t K
@@ -335,10 +335,44 @@ Random_Feasible_Point_solver
     /* Set the initional condition */
 
     auto y_sol_a = y_sol.array();
-    matrix_t h_sol =
+    auto h_sol =
         (   y_sol_a * std::pow(10, 25) 
-        TODO
-        )
+        *   Eigen::inverse(y_sol_a.abs() * std::pow(10, 25) + std::pow(10, -25))
+        *   (std::log(2) - Eigen::log( y_sol_a.abs() + Eigen::sqrt(y_sol_a.pow(2) + 4))) 
+        );
+
+    auto K_eq_a = K_eq.array();
+    matrix_t b_RHS =
+        (   K_eq_a + h_sol 
+        -   (S_f_T * FxdM.reshaped<Eigen::RowMajor>()).array()
+        )   .matrix();
+
+    matrix_t n_sol = SvS * b_RHS;
+
+    matrix_t b_sol = 
+        (   S_v_T * n_sol.reshaped<Eigen::RowMajor>()
+        +   S_f_T * FxdM.reshaped<Eigen::RowMajor>()
+        )   .reshaped<Eigen::RowMajor>();
+
+    matrix_t beta_sol = beta;
 
 
+    /* Get the system parameters to contruct the model */
+
+    /* Metabolite params */
+    n_M = n_M_f + n_M_v;
+
+    /* construct param indices */
+    index_list_t react_idx(n_react);
+    std::iota(react_idx.begin(), react_idx.end(), 0);
+
+    index_list_t beta_idx(dSv_N);
+    std::iota(beta_idx.begin(), beta_idx.end(), 0);
+
+    /* set the optimization parameters */
+    value_t VarM_lbnd = -300l;
+
+    /* TODO: model defintion (lines 607-845) */
+
+    return;
 }
