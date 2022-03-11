@@ -1,3 +1,9 @@
 [submodule "spack"]
 	path = spack
 	url = https://github.com/spack/spack.git
+[submodule "ifopt"]
+	path = ifopt
+	url = https://github.com/ethz-adrl/ifopt.git
+[submodule "eigen"]
+	path = eigen
+	url = https://gitlab.com/libeigen/eigen.git
