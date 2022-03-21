@@ -1,0 +1,17 @@
+/qfs/people/cann484/metab/spack/opt/spack/linux-centos7-zen2/gcc-9.1.0/ipopt-3.12.10-em5bxg57p775f6kd44mf3wbfnvmsm2c5/include/coin/
+
+
+HSLLoader.h              IpEqMultCalculator.hpp           IpJournalist.hpp      IpReturnCodes.h            IpTaggedObject.hpp
+IpAlgBuilder.hpp         IpException.hpp                  IpLapack.hpp          IpReturnCodes.hpp          IpTimedTask.hpp
+IpAlgStrategy.hpp        IpExpansionMatrix.hpp            IpLineSearch.hpp      IpReturnCodes.inc          IpTimingStatistics.hpp
+IpAlgTypes.hpp           IpGenTMatrix.hpp                 IpMatrix.hpp          IpReturnCodes_inc.h        IpTNLPAdapter.hpp
+IpAugSystemSolver.hpp    IpHessianUpdater.hpp             IpMuUpdate.hpp        IpScaledMatrix.hpp         IpTNLP.hpp
+IpBlas.hpp               IpIdentityMatrix.hpp             IpNLP.hpp             IpSearchDirCalculator.hpp  IpTNLPReducer.hpp
+IpCachedResults.hpp      IpIpoptAlg.hpp                   IpNLPScaling.hpp      IpSmartPtr.hpp             IpTripletHelper.hpp
+IpCompoundMatrix.hpp     IpIpoptApplication.hpp           IpObserver.hpp        IpSolveStatistics.hpp      IpTypes.hpp
+IpCompoundSymMatrix.hpp  IpIpoptCalculatedQuantities.hpp  IpoptConfig.h         IpStdCInterface.h          IpUtils.hpp
+IpCompoundVector.hpp     IpIpoptData.hpp                  IpOptionsList.hpp     IpSumSymMatrix.hpp         IpVector.hpp
+IpConvCheck.hpp          IpIpoptNLP.hpp                   IpOrigIpoptNLP.hpp    IpSymLinearSolver.hpp      IpZeroSymMatrix.hpp
+IpDebug.hpp              IpIterateInitializer.hpp         IpPDSystemSolver.hpp  IpSymMatrix.hpp            PardisoLoader.h
+IpDenseVector.hpp        IpIteratesVector.hpp             IpReferenced.hpp      IpSymScaledMatrix.hpp
+IpDiagMatrix.hpp         IpIterationOutput.hpp            IpRegOptions.hpp      IpSymTMatrix.hpp

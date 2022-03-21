@@ -33,3 +33,6 @@ matrix types only support linear -algebra operations, for
     At the end of the operations, one then must call .matrix() 
     to convert the array back into a mtraix.
     
+
+IFOPT/EIGEN INSTALL NOTES:
+    cmake flags: -DCMAKE_CXX_FLAGS="-std=c++17 " -DCMAKE_INSTALL_PREFIX=/path/to/metab

@@ -3,8 +3,8 @@
 #include <vector>
 #include <numeric>
 #include <math.h>
+#include "IpIpoptApplication.hpp"
 
-#include "Eigen/Core"
 #include "Eigen/Dense"
 
 #define EIGEN_DEFAULT_DENSE_INDEX_TYPE = size_t;
