@@ -35,4 +35,6 @@ matrix types only support linear -algebra operations, for
     
 
 IFOPT/EIGEN INSTALL NOTES:
-    cmake flags: -DCMAKE_CXX_FLAGS="-std=c++17 " -DCMAKE_INSTALL_PREFIX=/path/to/metab
+    cmake flags: -DCMAKE_CXX_FLAGS="-std=c++17 -DCMAKE_INSTALL_PREFIX=/path/to/metab
+
+https://list.coin-or.org/pipermail/ipopt/2015-July/004087.html
