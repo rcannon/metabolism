@@ -4,8 +4,3 @@
 [submodule "eigen"]
 	path = eigen
 	url = https://gitlab.com/libeigen/eigen.git
-[submodule "ThirdParty-Mumps"]
-	path = ThirdParty-Mumps
-	url = https://github.com/coin-or-tools/ThirdParty-Mumps.git
-
-
