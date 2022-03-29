@@ -15,7 +15,6 @@ add_subdirectory(ifopt)
 add_executable(Feasible_point_relaxed feasible_point_relaxed.cc)
 add_executable(Maximum_entropy_relaxed maximum_entropy_relaxed.cc)
 
-
 target_link_libraries(Feasible_point_relaxed PUBLIC eigen ifopt)
 target_link_libraries(Maximum_entropy_relaxed PUBLIC eigen ifopt)
 
