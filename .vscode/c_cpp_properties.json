@@ -4,7 +4,8 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/share/apps/ipopt/3.14/include/coin-or"
+                "/share/apps/ipopt/3.14/include/coin-or",
+                "./include"
             ],
             "defines": [],
             "compilerPath": "/share/apps/gcc/9.1.0/bin/gcc",

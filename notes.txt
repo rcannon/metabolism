@@ -1,3 +1,14 @@
+Thoughts
+    - optimization: if we know n_metabolites_, we know dimension of matrices and vectors.
+        - define different vector_t and matrix_t types inside class
+    - optimization: build vectors/matrix inside Constraint class
+        - or use std::move if they wont be used later.
+Questions for Ethan
+    - m.SvS is never used
+
+eigen objects and any object that contains an eigin object MUST be 
+    passed by reference and never by value. or else memory become unaligned. 
+    Returning by value is fine though.
 
 matrix_t A = B; performs a deep copy of B into A.
 
@@ -39,3 +50,12 @@ IFOPT/EIGEN INSTALL NOTES:
 
 https://list.coin-or.org/pipermail/ipopt/2015-July/004087.html
 https://stackoverflow.com/questions/34138879/unable-to-find-eigen3-with-cmake
+
+
+
+meeting April 11
+    - unknown vars
+    - diff between max_ent_relaxed and feasible_point_relaxed?
+
+
+    

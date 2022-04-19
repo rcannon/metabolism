@@ -15,5 +15,5 @@ mkdir build
 cd build
 cmake -DCMAKE_CXX_FLAGS="-std=c++17 " -DCMAKE_INSTALL_PREFIX=$(pwd)/../.. ..
 make install
- cd ../..
+cd ../..
 
