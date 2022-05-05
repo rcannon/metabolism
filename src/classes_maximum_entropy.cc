@@ -12,7 +12,7 @@ Variables::Variables( const std::string& name
                     )
                     : VariableSet(num_variables, name)
                     , num_variables_(num_variables)
-                    , variables_(vector_t::Zero(nun_variables))
+                    , variables_(vector_t::Zero(num_variables))
 {}
 
 Variables::Variables( const std::string& name
@@ -22,7 +22,9 @@ Variables::Variables( const std::string& name
                     : VariableSet(num_variables, name)
                     , num_variables_(num_variables)
                     , variables_(init_values)
-{}
+{
+    assert(num_variables_ == variables_.size());
+}
 
 void 
 Variables::SetVariables( const vector_t& new_vars ) 
@@ -55,25 +57,42 @@ END VARIABLES CLASS
 CONSTRAINTS CLASS
 */
 
-Constraints::Constraints(const ConstraintArguements& args) 
-                        : ConstraintSet( 7 * args.n_metabolites + 2 * args.n_variable_metabolites 
-                                       , args.name)
-                        , n_metabolites_(args.n_metabolites)
-                        , n_variable_metabolites_(args.n_variable_metabolites)
-                        , fixed_metabolites_(args.fixed_metabolites_)
-                        , variable_metabolites_name_(args.variable_metabolites_name)
-                        , flux_variables_name_(args.flux_variables_name)
-                        , steady_state_variables_name_(args.steady_state_variables_name)
-                        , h_variables_name_(args.h_variables_name)
-                        , u_variables_name_(args.u_variable_name)
-                        , beta_variables_name_(args.beta_variables_name)
-                        , null_space_matrix_(args.null_space_matrix)
-                        , null_space_dimension_(args.null_space_dimension)
-                        , stochiometric_matrix_(args.stochiometric_matrix)
-                        , big_M_value_(args.big_M)
-                        , K_vector_(args.K_vector)
-                        , variable_metabolites_upper_bound_(args.variable_metabolites_upper_bound)
-                        , variable_metabolites_lower_bound_(args.variable_metabolites_lower_bound)
+Constraints::Constraints( const std::string& name,
+                        , const int n_metabolites
+                        , const int n_variable_metabolites
+                        , const vector_t& fixed_metabolites
+                        , const std::string& variable_metabolites_name
+                        , const std::string& flux_variables_name
+                        , const std::string& steady_state_variables_name; // S^T * eta 
+                        , const std::string& h_variables_name
+                        , const std::string& u_variable_name
+                        , const std::string& beta_variables_name
+                        , const matrix_t& null_space_matrix
+                        , const int null_space_dimension
+                        , const matrix_t& stochiometric_matrix
+                        , const double big_M_value
+                        , const vector_t& equilibrium_constants
+                        , const double variable_metabolites_upper_bound
+                        , const double variable_metabolites_lower_bound
+                        ) 
+                        : ConstraintSet( 7 * n_metabolites + 2 * n_variable_metabolites 
+                                       , name)
+                        , n_metabolites_(n_metabolites)
+                        , n_variable_metabolites_(n_variable_metabolites)
+                        , fixed_metabolites_(fixed_metabolites_)
+                        , variable_metabolites_name_(variable_metabolites_name)
+                        , flux_variables_name_(flux_variables_name)
+                        , steady_state_variables_name_(steady_state_variables_name)
+                        , h_variables_name_(h_variables_name)
+                        , u_variables_name_(u_variable_name)
+                        , beta_variables_name_(beta_variables_name)
+                        , null_space_matrix_(null_space_matrix)
+                        , null_space_dimension_(null_space_dimension)
+                        , stochiometric_matrix_(stochiometric_matrix)
+                        , big_M_value_(big_M)
+                        , equilibrium_constants_(equilibrium_constants)
+                        , variable_metabolites_upper_bound_(variable_metabolites_upper_bound)
+                        , variable_metabolites_lower_bound_(variable_metabolites_lower_bound)
 {
     assert(n_variable_metabolites_ == GetVariablesVectorByName(variable_metabolites_name_).size());
     assert(fixed_metabolites_.size() == n_metabolites_ - n_variable_metabolites_);
@@ -83,11 +102,11 @@ Constraints::Constraints(const ConstraintArguements& args)
     assert(GetVariablesVectorByName(u_variables_name_).size() == n_metabolites_);
     assert(null_space_matrix_.rows() == n_metabolites_);
     assert(null_space_dimension_ == null_space_matrix_.cols());
-    assert(null_space_dimension_ == GetVariablesVectorByName(beta_variables_name_).size());
+    assert(GetVariablesVectorByName(beta_variables_name_).size() == null_space_dimension_);
     assert(stochiometric_matrix_.rows() == n_metabolites_);
     assert(stochiometric_matrix_.cols() == n_metabolites_);
-    assert(K_vector_.size() == n_metabolites_);
-    assert(variable_metabolites_upper_bound_ > variable_metabolites_lower_bound_);
+    assert(equilibrium_constants_.size() == n_metabolites_);
+    assert(variable_metabolites_upper_bound_.min() > variable_metabolites_lower_bound_);
 }
 
 vector_t 
@@ -112,7 +131,7 @@ Constraints::GetValues() const override
             , CalculateRelexedFluxLowerConstraint()        // MEPPF 98
             , CalculateSignConstraint()                    // MEPPF 99
             , CalculateRelaxedFluxSignConstraint()         // MEPPF 100
-            , CalculateMetabolitesUpperBoundConstraint()   // MEPPF 101
+            , CalculateMetabolitesUpperBoundConstraint()   // MEPPF 101 upper
             , CalculateMetaboliteLowerBoundConstraint()    // MEPPF 101 lower
 
     return result;
@@ -162,8 +181,8 @@ const override
     int meppf98 = 4 * n_metabolites_;
     int meppf99 = 5 * n_metabolites_;
     int meppf100 = 6 * n_metabolites_;
-    int meppf101 = 7 * n_metabolites_;
-    int meppf102 = 8 * n_metabolites_;
+    int meppf101_upper = 7 * n_metabolites_;
+    int meppf101_lower = 8 * n_metabolites_;
     int row_offset; // generally equal to constraint_offset * n_metabolites_
     int col_offset; // increases by n_metabolities_ after each constraint jacobian fill block within each variable if-statement,
                     // since jac_block ionly contains columns relevent to particular variable
@@ -186,9 +205,9 @@ const override
             }
         }
 
-        // MEPPF 101
+        // MEPPF 101 upper
         col_offest = += end;
-        row_offset = meppf101;
+        row_offset = meppf101_upper;
         for (diag = start; diag < end; diag++) {
             jac_block.coeffRef( row + row_offset
                               , col + col_offset
@@ -197,9 +216,9 @@ const override
             }
         }
 
-        // MEPPF 102
+        // MEPPF 101 lower
         col_offset += end;
-        row_offset = meppf102;
+        row_offset = meppf101_lower;
         for (diag = start; diag < end; diag++) {
             jac_block.coeffRef( row + row_offset
                               , col + col_offset
@@ -400,7 +419,9 @@ const
     vector_t beta_vec = GetVariablesVectorByName(beta_variables_name_);
     vector_t fluxes = GetVariablesVectorByName(flux_variables_name_);
 
-    return ((null_space_matrix_ * beta_vec) - fluxes);
+    vector_t resutlt = ((null_space_matrix_ * beta_vec) - fluxes);
+
+    return result;
 }
 
 vector_t
@@ -412,7 +433,9 @@ const
     vector_t steady_state_variables = GetVariablesVectorByName(steady_state_variables_name_);
     vector_t metabolites = GetAllMetabolites();
 
-    return ((stochiomtric_matrix_ * metabolites) - steady_state_variables);
+    vector_t result = ((stochiomtric_matrix_ * metabolites) - steady_state_variables);
+
+    return result;
 }
 
 vector_t
@@ -447,9 +470,11 @@ const
     vector_t h_variables = GetVariablesVectorByName(h_variables_name_);
     vector_t u_variables = GetVariablesVectorByName(u_variables_name_);
     vector_t steady_state_variables = GetVariablesVectorByName(steady_state_variables_name_);
-    vector_t log_K_vector = K_vector_.array().log().matrix();
+    vector_t log_equilibrium_constants = equilibrium_constants_.array().log().matrix();
 
-    return h_variables - (big_M_value_ * u_variables) + log_K_vector - steady_state_variables;
+    vector_t result = h_variables - (big_M_value_ * u_variables) + log_equilibrium_constants - steady_state_variables;
+
+    return result;
 }
 
 vector_t
@@ -462,9 +487,11 @@ const
     vector_t u_variables = GetVariablesVectorByName(u_variables_name_);
     vector_t one_minus_u = (1 - u_variables.array()).matrix()
     vector_t steady_state_variables = GetVariablesVectorByName(steady_state_variables_name_);
-    vector_t log_K_vector = K_vector_.array().log().matrix();
+    vector_t log_equilibrium_constants = equilibrium_constants_.array().log().matrix();
 
-    return h_variables + (big_M_value_ * one_minus_u) + log_K_vector - steady_state_variables;
+    vector_t result = h_variables + (big_M_value_ * one_minus_u) + log_equilibrium_constants - steady_state_variables;
+
+    return result;
 }
 
 vector_t
@@ -474,10 +501,10 @@ const
     // Maximum Entropy Production Problem Formulation 99
 
     auto fluxes_array = GetVariablesVectorByName(flux_variables_name_).array();
-    auto log_K_array = K_vector_.array().log();
+    auto log_equilibrium_constants_array = equilibrium_constants_.array().log();
     auto steady_state_variables_array = GetVariablesVectorByName(steady_state_variables_name_).array();
 
-    auto result = (log_K_array - steady_state_variables_array) *  fluxes_array;
+    auto result = (log_equilibrium_constants_array - steady_state_variables_array) *  fluxes_array;
 
     return result.matrix();
 }
@@ -535,7 +562,7 @@ Constraints::CalculateSignConstraintGadientFluxVariables()
 const
 {
     auto steady_state_variables = GetVariablesVectorByName(steady_state_variables_name_);
-    vector_t result = K_vector_.array().log().matrix() - steady_state_variables;
+    vector_t result = equilibrium_constants_.array().log().matrix() - steady_state_variables;
 
     return result;
 }
@@ -558,16 +585,16 @@ END CONSTRAINTS CLASS
 COST FUNCTION CLASS
 */
 
-MetabConst::MetabCost( const std::string& name 
-                     , const std::string& variable_metabolites_name 
-                     ) 
-                     : CostTerm(name)
-                     , variable_metabolites_name_(variable_metabolites_name) 
+Cost::Cost  ( const std::string& name 
+            , const std::string& variable_metabolites_name 
+            ) 
+            : CostTerm(name)
+            , variable_metabolites_name_(variable_metabolites_name) 
 {}
 
 
 double 
-MetabCost::GetCost() 
+Cost::GetCost() 
 const override
 {
     vector_t x = GetVariables()->GetComponent(variable_metabolites_name_)->GetValues();
@@ -576,9 +603,9 @@ const override
 
 
 void 
-MetabCost::FillJacobianBlock( std::string var_set
-                            , Jacobian& jac
-                            ) 
+Cost::FillJacobianBlock ( std::string var_set
+                        , Jacobian& jac
+                        ) 
 const override
 {
     if (var_set == variable_metabolites_name_) {

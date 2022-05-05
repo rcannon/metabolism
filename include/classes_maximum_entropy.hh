@@ -1,29 +1,5 @@
 
-#pragma once
-
-/* general */
-#include <iostream>
-#include <vector>
-#include <string>
-#include <numeric>
-#include <math.h>
-
-/* IFOPT */
-#include <ifopt/variable_set.h>
-#include <ifopt/constraint_set.h>
-#include <ifopt/cost_term.h>
-
-/* Eigen */
-#include "Eigen/Core"
-#include "Eigen/Dense"
-
-/* Type definitions and aliases */
-#define EIGEN_DEFAULT_DENSE_INDEX_TYPE = int;
-typedef double value_t;
-typedef std::vector<value_t> value_list_t;
-typedef std::vector<int> index_list_t;
-typedef Eigen::MatrixXd matrix_t;
-typedef Eigen::VectorXd vector_t;
+#include "includes_and_types.hh"
 
 namespace ifopt {
 
@@ -48,32 +24,29 @@ private:
 
 } /* end variables */
 
-/* arguement struct for initializing constraint class */
-struct ConstraintArguements {
-    std::string& name;
-    int n_metabolites;
-    int n_variable_metabolites;
-    vector_t& fixed_metabolites;
-    std::string& variable_metabolites_name;
-    std::string& flux_variables_name;
-    std::string& steady_state_variables_name; // S^T * eta 
-    std::string& h_variables_name;
-    std::string& u_variable_name;
-    std::string& beta_variables_name;
-    matrix_t& null_space_matrix;
-    int null_space_dimension;
-    matrix_t& stochiometric_matrix;
-    double big_M_value;
-    vector_t& K_vector;
-    double variable_metabolites_upper_bound;
-    double variable_metabolites_lower_bound;
-}; /* end arguement struct */
 
 /* specific constraint_class that holds all constraints for the problem */
 class Constraints : public ConstraintSet {
 public:
 
-    Constraints( const ConstraintArguements& args );
+    Constraints::Constraints( const std::string& name,
+                            , const int n_metabolites
+                            , const int n_variable_metabolites
+                            , const vector_t& fixed_metabolites
+                            , const std::string& variable_metabolites_name
+                            , const std::string& flux_variables_name
+                            , const std::string& steady_state_variables_name; // S^T * eta 
+                            , const std::string& h_variables_name
+                            , const std::string& u_variable_name
+                            , const std::string& beta_variables_name
+                            , const matrix_t& null_space_matrix
+                            , const int null_space_dimension
+                            , const matrix_t& stochiometric_matrix
+                            , const double big_M_value
+                            , const vector_t& equilibrium_constants
+                            , const double variable_metabolites_upper_bound
+                            , const double variable_metabolites_lower_bound
+                            ) 
     vector_t GetValues() const override;
     VecBound GetBounds() const override;
     void FillJacobianBlock( std::string var_set
@@ -110,8 +83,8 @@ private:
     const double null_space_dimension_;
     const matrix_t stochiometric_matrix_;
     const double big_M_value_;
-    const vector_t K_vector_;
-    const double variable_metabolites_upper_bound_;
+    const vector_t equilibrium_constants_;
+    const vector_t variable_metabolites_upper_bound_;
     const double variable_metabolites_lower_bound_;
 }
 
@@ -120,9 +93,9 @@ private:
 class Cost : public CostTerm {
 public:
 
-    MetabCost( const std::string& name 
-             , const std::string& reaction_vars_name 
-             );
+    Cost( const std::string& name 
+        , const std::string& reaction_vars_name 
+        );
     double GetCost() const override;
     void FillJacobianBlock( std::string var_set
                           , Jacobian& jac

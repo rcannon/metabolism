@@ -10,6 +10,10 @@ eigen objects and any object that contains an eigin object MUST be
     passed by reference and never by value. or else memory become unaligned. 
     Returning by value is fine though.
 
+when we are assigning a matrix expression to a matrix that appears
+    in the expression, be sure to call .eval() on the RHS.
+    Ex. A = A * B; should be A = (A * B).eval();
+
 matrix_t A = B; performs a deep copy of B into A.
 
 numpy array operation * is elementwise
