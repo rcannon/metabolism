@@ -1,41 +1,37 @@
 
 #include "maximum_entropy_relaxed.hh"
 
+namespace ifopt {
+
 
 std::tuple<vector_t, vector_t, vector_t, vector_t, vector_t>
 max_ent_solver
-    ( vector_t variable_metabolites_ini // aka n
+    ( vector_t variable_metabolites_init // aka n
     , vector_t fixed_metabolites
-    , vector_t flux_vars_ini // aka y
-    , vector_t beta_ini // \beta
+    , vector_t flux_vars_init // aka y
+    , vector_t beta_init // \beta
     , vector_t target_log_variable_metabolites_counts
     , matrix_t stoichiometric_matrix
     , vector_t equilibrium_constants // aka K
     , index_list_t obj_rxn_idx
     )
 {
-
-    TODO: 
-    If n_react <= n_total_metabolites:
-        trim stoich matrix, flux, steady_state, h_vars to only include ones less than n_react
-    where n_react in line 37
-    
     //
     // setup 
     //
     
     size_t num_fixed_metabolites = fixed_metabolites.size();
-    size_t num_variable_metabolites = variable_metabolites_ini.size();
+    size_t num_variable_metabolites = variable_metabolites_init.size();
     size_t num_total_metabolies = num_fixed_metabolites + num_variable_metabolites;
 
     value_t variable_metabolite_lower_bound = -300;
     value_t big_M_value = 1000;
-    vector_t flux_variables_ini_signs = flux_variables_ini.array().sign().matrix();
+    vector_t flux_variables_init_signs = flux_variables_init.array().sign().matrix();
 
-    // Flip Stoichiometric Matrix
+    // Stoichiometric Matrix - rows are reactions, cols are metabolites
     matrix_t stoichiometric_matrix_T = stoichiometric_matrix; // this should do deep copy 
-    stoichiometric_matrix.transposeInPlace();
-    size_t n_react = stoichiometric_matrix.cols(); // should be same as numpy.shape(S)[1]
+    stoichiometric_matrix.transposeInPlace(); // now rows are metabolites, cols are reactions
+    size_t n_reactions = stoichiometric_matrix.cols(); // should be same as numpy.shape(S)[1]
 
     // Split S into the component corresponding to the variable metabolites S_v
     // and the component corresponding to the fixed metabolites. 
@@ -76,59 +72,59 @@ max_ent_solver
     std::string variable_metabolites_variables_name = "log_variable_metabolites";
     nlp.AddVariableSet(std::make_shared<Variables>  ( variable_metabolites_variable_name
                                                     , num_variable_metabolites
-                                                    , variable_metabolites_ini
+                                                    , variable_metabolites_init
                                                     ));
 
     // add flux variables (aka y)
     std::string flux_variables_name = "flux_variables";
-    size_t num_flux_variables = flux_vars_ini.size();
+    size_t num_flux_variables = n_reactions;
     nlp.AddVariableSet(std::make_shared<Variables>  ( flux_variables_name
                                                     , num_flux_variables
-                                                    , flux_vars_ini
+                                                    , flux_vars_init
                                                     ));
 
     // add steady state variables (aka g in paper, b in python version)
     std::string steady_state_variables_name = "steady_state_variables";
-    vector_t steady_state_vars_ini  
-        = (S_v_T * variable_metabolites_ini) 
+    vector_t steady_state_vars_init
+        = (S_v_T * variable_metabolites_init) 
         + (S_f_T * fixed_metabolites );
-    size_t num_steady_state_variables = steady_state_variables_ini.size();
+    size_t num_steady_state_variables = n_reactions;
     nlp.AddVariableSet(std::make_shared<Variables>  ( steady_state_variables_name
                                                     , num_steady_state_variables
-                                                    , steady_state_vars_ini
+                                                    , steady_state_vars_init
                                                     ));
 
     // add beta variables
     std::string beta_variables_name = "beta_variables";
     nlp.AddVariableSet(std::make_shared<Variables>  ( beta_variables_name
                                                     , dSv_N
-                                                    , beta_ini
+                                                    , beta_init
                                                     ));
 
     // add h variables
     std::string h_variables_name = "h_variables";
-    auto fvia = flux_vars_ini.array();
-    vector_t h_ini = 
-        (   flux_variables_ini_signs.array()
+    auto fvia = flux_vars_init.array();
+    vector_t h_init = 
+        (   flux_variables_init_signs.array()
         *   (   std::log(2) 
             -   Eigen::log  (   fvia.abs()
                             +   (fvia.pow(2) + 4).sqrt()   
                             )
             )
         ).matrix();
-    size_t h_ini_size = h_ini.size()
+    size_t h_init_size = n_reactions;
     nlp.AddVariableSet(std::make_shared<Variables>  ( h_variables_name
-                                                    , h_ini_size
-                                                    , h_ini
+                                                    , h_init_size
+                                                    , h_init
                                                     ));
 
     // add u variables
     std::string u_variable_name = "u_variables";
-    vector_t u_ini = 0.5 + 0.5 * flux_variables_ini_signs;
-    size_t u_ini_size = u_ini.size()
+    vector_t u_init = 0.5 + 0.5 * flux_variables_ini_signs;
+    size_t u_init_size = n_reactions;
     nlp.AddVariableSet(std::make_shared<Variables>  ( u_variable_name
-                                                    , u_ini_size
-                                                    , u_ini
+                                                    , u_init_size
+                                                    , u_init
                                                     ));
 
     //
@@ -146,6 +142,7 @@ max_ent_solver
     nlp.AddConstraintSet(std::make_shared<Constraint>   ( cost_class_name
                                                         , num_total_metabolies
                                                         , num_variable_metabolites
+                                                        , n_reactions
                                                         , fixed_metabolites
                                                         , variable_metabolites_variables_name
                                                         , flux_variables_name
@@ -155,7 +152,7 @@ max_ent_solver
                                                         , beta_variables_name
                                                         , null_space_stoich_matrix_variable_metab_section
                                                         , dim_null_space
-                                                        , stoichiometric_matrix
+                                                        , stoichiometric_matrix_T
                                                         , big_M_value
                                                         , equilibrium_constants
                                                         , target_log_variable_metabolites_counts
@@ -202,31 +199,30 @@ max_ent_solver
 
 vector_t
 rxn_flux
-    ( vector_t v_log_counts
-    , vector_t f_log_counts
-    , matrix_t S
-    , matrix_t K
+    ( vector_t variable_metabolites__log_counts
+    , vector_t fixed_metabolites_log_counts
+    , matrix_t stochiometric_matrix
+    , matrix_t equilibrium_constants
     , matrix_t E_regulation
     )
 {
-    /* Flip Stoichiometric Matrix */
-    matrix_t S_T = S; /* this should do deep copy */
-    S.transposeInPlace();
+    matrix_t stochiometric_matrix_T = stochiometric_matrix;
+    stochiometric_matrix.transposeInPlace();
 
-    size_t n_react = S.cols();
+    size_t n_reactions = stochiometric_matrix.cols();
 
-    v_log_counts = v_log_counts.reshaped<Eigen::RowMajor>().eval();
-    f_log_counts = f_log_counts.reshaped<Eigen::RowMajor>().eval();
+    variable_metabolites_log_counts = variable_metabolites_log_counts.reshaped<Eigen::RowMajor>().eval();
+    fixed_metabolites_log_counts = fixed_metabolites_log_counts.reshaped<Eigen::RowMajor>().eval();
 
-    vector_t tot_log_count(v_log_counts.size() + f_log_counts.ize());
-    tot_log_counts << v_log_counts, f_log_counts;
+    vector_t tot_log_count(variable_metabolites_log_counts.size() + fixed_metabolites_log_counts.size());
+    total_log_counts << variable_metabolites_log_counts, fixed_metabolites_log_counts;
 
-    K = K.reshaped<Eigen::RowMajor>().eval();
+    equilibrium_constants = equilibrium_constants.reshaped<Eigen::RowMajor>().eval();
     E_regulation = E_regulation.reshaped<Eigen::RowMajor>().eval();
 
-    auto coeff = (-0.25 * S_T * tot_log_counts).array().exp().pow(4)
-    auto forward_odds = K.array() * coeff;
-    auto reverse_odds = K.array().inverse() * coeff;
+    auto coeff = (-0.25 * S_T * total_log_counts).array().exp().pow(4)
+    auto forward_odds = equilibrium_constants.array() * coeff;
+    auto reverse_odds = equilibrium_constants.array().inverse() * coeff;
 
     vector_t result = 
         ( E_regulation.array()
@@ -235,3 +231,5 @@ rxn_flux
 
     return result;
 }
+
+} // namespace

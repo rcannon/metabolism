@@ -1,65 +1,12 @@
 
-#include "classes_maximum_entropy.hh"
+#include "ifopt_constraint_class.hh"
 
 namespace ifopt {
-
-/*
-VARIABLES CLASS
-*/
-
-Variables::Variables( const std::string& name
-                    , const int num_variables
-                    )
-                    : VariableSet(num_variables, name)
-                    , num_variables_(num_variables)
-                    , variables_(vector_t::Zero(num_variables))
-{}
-
-Variables::Variables( const std::string& name
-                    , const int num_variables
-                    , const vector_t& init_values
-                    )
-                    : VariableSet(num_variables, name)
-                    , num_variables_(num_variables)
-                    , variables_(init_values)
-{
-    assert(num_variables_ == variables_.size());
-}
-
-void 
-Variables::SetVariables( const vector_t& new_vars ) 
-override
-{
-    assert(n_variables_ == new_vars.size());
-    variables_ = new_vars;
-} 
-
-vector_t 
-Variables::GetValues() 
-const override
-{
-    return variables_;
-}
-
-int 
-Variables::GetNumVariables() 
-const
-{
-    return n_variables_;
-}
-
-/*
-END VARIABLES CLASS
-*/
-
-
-/*
-CONSTRAINTS CLASS
-*/
 
 Constraints::Constraints( const std::string& name,
                         , const int n_metabolites
                         , const int n_variable_metabolites
+                        , const int n_reactions
                         , const vector_t& fixed_metabolites
                         , const std::string& variable_metabolites_name
                         , const std::string& flux_variables_name
@@ -69,7 +16,7 @@ Constraints::Constraints( const std::string& name,
                         , const std::string& beta_variables_name
                         , const matrix_t& null_space_matrix
                         , const int null_space_dimension
-                        , const matrix_t& stochiometric_matrix
+                        , const matrix_t& stochiometric_matrix_T
                         , const double big_M_value
                         , const vector_t& equilibrium_constants
                         , const double variable_metabolites_upper_bound
@@ -79,6 +26,7 @@ Constraints::Constraints( const std::string& name,
                                        , name)
                         , n_metabolites_(n_metabolites)
                         , n_variable_metabolites_(n_variable_metabolites)
+                        , n_reactions_(n_reactions);
                         , fixed_metabolites_(fixed_metabolites_)
                         , variable_metabolites_name_(variable_metabolites_name)
                         , flux_variables_name_(flux_variables_name)
@@ -88,7 +36,7 @@ Constraints::Constraints( const std::string& name,
                         , beta_variables_name_(beta_variables_name)
                         , null_space_matrix_(null_space_matrix)
                         , null_space_dimension_(null_space_dimension)
-                        , stochiometric_matrix_(stochiometric_matrix)
+                        , stochiometric_matrix_T_(stochiometric_matrix_T)
                         , big_M_value_(big_M)
                         , equilibrium_constants_(equilibrium_constants)
                         , variable_metabolites_upper_bound_(variable_metabolites_upper_bound)
@@ -96,16 +44,16 @@ Constraints::Constraints( const std::string& name,
 {
     assert(n_variable_metabolites_ == GetVariablesVectorByName(variable_metabolites_name_).size());
     assert(fixed_metabolites_.size() == n_metabolites_ - n_variable_metabolites_);
-    assert(GetVariablesVectorByName(flux_variables_name_).size() == n_metabolites_);
-    assert(GetVariablesVectorByName(steady_state_variables_name_).size() == n_metabolites_);
-    assert(GetVariablesVectorByName(h_variables_name_).size() == n_metabolites_);
-    assert(GetVariablesVectorByName(u_variables_name_).size() == n_metabolites_);
-    assert(null_space_matrix_.rows() == n_metabolites_);
-    assert(null_space_dimension_ == null_space_matrix_.cols());
+    assert(GetVariablesVectorByName(flux_variables_name_).size() == n_reactions_);
+    assert(GetVariablesVectorByName(steady_state_variables_name_).size() == n_reactions_);
+    assert(GetVariablesVectorByName(h_variables_name_).size() == n_reactions_);
+    assert(GetVariablesVectorByName(u_variables_name_).size() == n_reactions_);
+    assert(null_space_matrix_.rows() == n_reactions_);
+    assert(null_space_matrix_.cols() == null_space_dimension_);
     assert(GetVariablesVectorByName(beta_variables_name_).size() == null_space_dimension_);
     assert(stochiometric_matrix_.rows() == n_metabolites_);
-    assert(stochiometric_matrix_.cols() == n_metabolites_);
-    assert(equilibrium_constants_.size() == n_metabolites_);
+    assert(stochiometric_matrix_.cols() == n_reactions_);
+    assert(equilibrium_constants_.size() == n_reactions_);
     assert(variable_metabolites_upper_bound_.min() > variable_metabolites_lower_bound_);
 }
 
@@ -143,18 +91,53 @@ const override
 {
     VecBound b(GetRows());
 
-    assert(b.end() == (b.begin() + 7 * n_metabolites_ + 2 * n_variable_metabolites_));
+    assert(b.end() == (b.begin() + 7 * n_reactions_ + 2 * n_variable_metabolites_));
 
-    std::fill( b.begin()                      , b.begin() +     n_metabolites_ , Bounds(0.0, 0.0)  ); // MEPPF 94 bounds
-    std::fill( b.begin() +     n_metabolites_ , b.begin() + 2 * n_metabolites_ , Bounds(0.0, 0.0)  ); // MEPPF 95 bounds
-    std::fill( b.begin() + 2 * n_metabolites_ , b.begin() + 3 * n_metabolites_ , Bounds(0.0, 0.0)  ); // MEPPF 96 bounds
-    std::fill( b.begin() + 3 * n_metabolites_ , b.begin() + 4 * n_metabolites_ , Bounds(-inf, 0.0) ); // MEPPF 97 bounds
-    std::fill( b.begin() + 4 * n_metabolites_ , b.begin() + 5 * n_metabolites_ , Bounds(0.0, +inf) ); // MEPPF 98 bounds
-    std::fill( b.begin() + 5 * n_metabolites_ , b.begin() + 6 * n_metabolites_ , Bounds(0.0, +inf) ); // MEPPF 99 bounds
-    std::fill( b.begin() + 6 * n_metabolites_ , b.begin() + 7 * n_metabolites_ , Bounds(0.0, 0.0)  ); // MEPPF 100 bounds
-    std::fill( b.begin() + 7 * n_metabolites_ , b.begin() + 7 * n_metabolites_ 
-                                                          + n_variable_metabolites_ , Bounds(0.0, +inf) ); // MEPPF 101 upper bounds
-    std::fill( b.begin() + 7 * n_metabolites_ + n_variable_metabolites_ , b.end()   , Bounds(-inf, 0.0) ); // MEPPF 101 lower bounds
+    // MEPPF 94 bounds
+    auto next_begin = b.begin();
+    auto next_end   = b.begin() + n_reactions_;
+    std::fill( next_begin, next_end, Bounds(0.0, 0.0) ); 
+
+    // MEPPF 95 bounds
+    next_begin = b.begin() + n_reactions_;
+    next_end   = b.begin() + 2 * n_reactions_;
+    std::fill( next_begin, next_end, Bounds(0.0, 0.0) );
+
+    // MEPPF 96 bounds
+    next_begin = b.begin() + 2 * n_reactions_;
+    next_end =   b.begin() + 3 * n_reactions_;
+    std::fill( next_begin , next_end , Bounds(0.0, 0.0) ); 
+
+    // MEPPF 97 bounds
+    next_begin = b.begin() + 3 * n_reactions_;
+    next_end   = b.begin() + 4 * n_reactions_;
+    std::fill( next_begin , next_end , Bounds(-inf, 0.0) ); 
+
+    // MEPPF 98 bounds
+    next_begin = b.begin() + 4 * n_reactions_;
+    next_end   = b.begin() + 5 * n_reactions_;
+    std::fill( next_begin , next_end , Bounds(0.0, +inf) ); 
+
+    // MEPPF 99 bounds
+    next_begin = b.begin() + 5 * n_reactions_;
+    next_end   = b.begin() + 6 * n_reactions_;
+    std::fill( next_begin , next_end , Bounds(0.0, +inf) ); 
+
+    // MEPPF 100 bounds
+    next_begin = b.begin() + 6 * n_reactions_;
+    next_end   = b.begin() + 7 * n_reactions_;
+    std::fill( next_begin , next_end , Bounds(0.0, 0.0) ); 
+
+    // MEPPF 101 upper bounds
+    next_begin = b.begin() + 7 * n_reactions_;
+    next_end   = b.begin() + 7 * n_reactions_ + n_variable_metabolites_;
+    std::fill( next_begin , next_end , Bounds(0.0, +inf) ); 
+
+    // MEPPF 101 lower bounds
+    next_begin = b.begin() + 7 * n_reactions_ + n_variable_metabolites_;
+    next_end   = b.begin() + 7 * n_reactions_ + 2 * n_variable_metabolites_;
+    assert(next_end = b.end());
+    std::fill( next_begin , next_end , Bounds(-inf, 0.0) ); 
 
     return b;
 }
@@ -175,14 +158,14 @@ const override
 
     // index offests by constraint
     int meppf94 = 0;
-    int meppf95 = 1 * n_metabolites_;
-    int meppf96 = 2 * n_metabolites_;
-    int meppf97 = 3 * n_metabolites_;
-    int meppf98 = 4 * n_metabolites_;
-    int meppf99 = 5 * n_metabolites_;
-    int meppf100 = 6 * n_metabolites_;
-    int meppf101_upper = 7 * n_metabolites_;
-    int meppf101_lower = 8 * n_metabolites_;
+    int meppf95 = 1 * n_reactions_;
+    int meppf96 = 2 * n_reactions_;
+    int meppf97 = 3 * n_reactions_;
+    int meppf98 = 4 * n_reactions_;
+    int meppf99 = 5 * n_reactions_;
+    int meppf100 = 6 * n_reactions_;
+    int meppf101_upper = 7 * n_reactions_;
+    int meppf101_lower = 7 * n_reactions_ + n_variable_metabolites_;
     int row_offset; // generally equal to constraint_offset * n_metabolites_
     int col_offset; // increases by n_metabolities_ after each constraint jacobian fill block within each variable if-statement,
                     // since jac_block ionly contains columns relevent to particular variable
@@ -201,7 +184,7 @@ const override
                 jac_block.coeffRef( row + row_offset
                                   , col + col_offset
                                   ) 
-                                  = stochiometric_matrix(row, col);
+                                  = stochiometric_matrix_T(row, col);
             }
         }
 
@@ -577,52 +560,4 @@ const
     return result;
 }
 
-/*
-END CONSTRAINTS CLASS
-*/
-
-/*
-COST FUNCTION CLASS
-*/
-
-Cost::Cost  ( const std::string& name 
-            , const std::string& variable_metabolites_name 
-            ) 
-            : CostTerm(name)
-            , variable_metabolites_name_(variable_metabolites_name) 
-{}
-
-
-double 
-Cost::GetCost() 
-const override
-{
-    vector_t x = GetVariables()->GetComponent(variable_metabolites_name_)->GetValues();
-    return -x.sum();
-}
-
-
-void 
-Cost::FillJacobianBlock ( std::string var_set
-                        , Jacobian& jac
-                        ) 
-const override
-{
-    if (var_set == variable_metabolites_name_) {
-        vector_t x = GetVariables()->GetComponent(variable_metabolites_name_)->GetValues();
-        int num_vars = GetVariables()->GetComponent(variable_metabolites_name_)->GetNumVariables();
-
-        for (int i = 0; i < num_vars; i++) {
-            /*
-            Derivative of cost wrt to react variable i.
-            Note: IFOPT will put these in correct location in overall jacobian matrix.
-            */
-            jac.coeffRef(0, i) = -1.0;
-        }
-}
-
-/*
-END COST FUNCTION CLASS
-*/
-
-} // end ifopt namespace
+} // namespace

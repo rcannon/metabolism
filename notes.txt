@@ -6,6 +6,9 @@ Thoughts
 Questions for Ethan
     - m.SvS is never used
 
+****************************************************************************
+USAGE NOTES
+****************************************************************************
 eigen objects and any object that contains an eigin object MUST be 
     passed by reference and never by value. or else memory become unaligned. 
     Returning by value is fine though.
@@ -55,11 +58,6 @@ IFOPT/EIGEN INSTALL NOTES:
 https://list.coin-or.org/pipermail/ipopt/2015-July/004087.html
 https://stackoverflow.com/questions/34138879/unable-to-find-eigen3-with-cmake
 
-
-
-meeting April 11
-    - unknown vars
-    - diff between max_ent_relaxed and feasible_point_relaxed?
 
 
     
