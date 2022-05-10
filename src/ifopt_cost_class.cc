@@ -6,9 +6,11 @@ namespace ifopt {
 
 Cost::Cost  ( const std::string& name 
             , const std::string& variable_metabolites_name 
+            , objective_reaction_indices
             ) 
             : CostTerm(name)
             , variable_metabolites_name_(variable_metabolites_name) 
+            , objective_reaction_indices_(objective_reaction_indices)
 {}
 
 
@@ -16,7 +18,7 @@ double
 Cost::GetCost() 
 const override
 {
-    vector_t x = GetVariables()->GetComponent(variable_metabolites_name_)->GetValues();
+    vector_t x = GetVariables()->GetComponent(variable_metabolites_name_)->GetValues()(objective_reaction_indices);
     return -x.sum();
 }
 

@@ -5,7 +5,7 @@ namespace ifopt {
 
 
 std::tuple<vector_t, vector_t, vector_t, vector_t, vector_t>
-max_ent_solver
+maximum_entropy_solver
     ( vector_t variable_metabolites_init // aka n
     , vector_t fixed_metabolites
     , vector_t flux_vars_init // aka y
@@ -13,7 +13,7 @@ max_ent_solver
     , vector_t target_log_variable_metabolites_counts
     , matrix_t stoichiometric_matrix
     , vector_t equilibrium_constants // aka K
-    , index_list_t obj_rxn_idx
+    , index_list_t objective_reaction_indices
     )
 {
     //
@@ -41,7 +41,6 @@ max_ent_solver
     std::iota(variable_metabolite_indexes.begin(), variable_metabolite_indexes.end(), 0);
     index_list_t fixed_metabolite_indices(num_fixed_metabolites); /* fixed metabolite indices */
     std::iota(fixed_metabolite_indices.begin(), fixed_metabolite_indices.end(), num_fixed_metabolites);
-
     matrix_t stoich_matrix_variable_metab_section_T = stoichiometric_matrix_T(Eigen::all, variable_metabolite_indices);
     matrix_t stoich_matrix_fixed_metab_section_T = stoichiometric_matrix_T(Eigen::all, fixed_metabolite_indices);
 
@@ -133,6 +132,7 @@ max_ent_solver
     std::string cost_class_name = "metab_cost"; // ifopt stuff really likes it when you name it
     nlp.AddCostSet(std::make_shared<Cost>   ( cost_class_name
                                             , metabolites_variable_name
+                                            , objective_reaction_indices
                                             ));
     
     //
@@ -182,12 +182,12 @@ max_ent_solver
     vector_t h_sol = nlp.GetOptVariables()->GetValues(h_variables_name);
 
     vector_t E_regulation = vector_t::Constant(flux_sol.size(), 1.0);
-    vector_t unreq_rxn_flux = rxn_flux  ( metabolites_sol
-                                        , fixed_metabolites
-                                        , stoichiometric_matrix_T
-                                        , equilibrium_constants
-                                        , E_regulation
-                                        );
+    vector_t unreq_rxn_flux = reaction_flux ( metabolites_sol
+                                            , fixed_metabolites
+                                            , stoichiometric_matrix_T
+                                            , equilibrium_constants
+                                            , E_regulation
+                                            );
 
     vector_t alpha_sol = 
         ( flux_sol.array() / unreq_rxn_flux.array() ).matrix();
@@ -198,7 +198,7 @@ max_ent_solver
   
 
 vector_t
-rxn_flux
+reaction_flux
     ( vector_t variable_metabolites__log_counts
     , vector_t fixed_metabolites_log_counts
     , matrix_t stochiometric_matrix

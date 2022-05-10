@@ -1,3 +1,11 @@
+
+Goals:
+    Now: get compiling and output from c++ code
+    Next: get outputs matching python code
+
+
+
+
 Thoughts
     - optimization: if we know n_metabolites_, we know dimension of matrices and vectors.
         - define different vector_t and matrix_t types inside class

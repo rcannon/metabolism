@@ -11,14 +11,11 @@ enable_testing()
 add_subdirectory(eigen)
 add_subdirectory(ifopt)
 
-#add_library(metab metab.cpp)
-add_executable(Feasible_point_relaxed feasible_point_relaxed.cc)
-add_executable(Maximum_entropy_relaxed maximum_entropy_relaxed.cc)
+add_executable(Run_maximum_entropy run_maximum_entropy.cc)
 
-target_link_libraries(Feasible_point_relaxed PUBLIC eigen ifopt)
-target_link_libraries(Maximum_entropy_relaxed PUBLIC eigen ifopt)
+target_link_libraries(Run_maximum_entropy PUBLIC eigen ifopt)
 
-target_include_directories(Feasible_point_relaxed PUBLIC
+target_include_directories(Run_maximum_entropy PUBLIC
                           "${PROJECT_BINARY_DIR}"
                           "${PROJECT_SOURCE_DIR}/eigen"
                           "${PROJECT_SOURCE_DIR}/ifopt"
