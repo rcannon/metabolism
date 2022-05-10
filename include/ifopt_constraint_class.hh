@@ -9,24 +9,24 @@ namespace ifopt {
 class Constraints : public ConstraintSet {
 public:
 
-    Constraints::Constraints( const std::string& name,
-                            , const int n_metabolites
-                            , const int n_variable_metabolites
-                            , const vector_t& fixed_metabolites
-                            , const std::string& variable_metabolites_name
-                            , const std::string& flux_variables_name
-                            , const std::string& steady_state_variables_name; // S^T * eta 
-                            , const std::string& h_variables_name
-                            , const std::string& u_variable_name
-                            , const std::string& beta_variables_name
-                            , const matrix_t& null_space_matrix
-                            , const int null_space_dimension
-                            , const matrix_t& stochiometric_matrix
-                            , const double big_M_value
-                            , const vector_t& equilibrium_constants
-                            , const double variable_metabolites_upper_bound
-                            , const double variable_metabolites_lower_bound
-                            ) 
+    Constraints ( const std::string& name
+                , const int n_metabolites
+                , const int n_variable_metabolites
+                , const vector_t& fixed_metabolites
+                , const std::string& variable_metabolites_name
+                , const std::string& flux_variables_name
+                , const std::string& steady_state_variables_name // S^T * eta 
+                , const std::string& h_variables_name
+                , const std::string& u_variable_name
+                , const std::string& beta_variables_name
+                , const matrix_t& null_space_matrix
+                , const int null_space_dimension
+                , const matrix_t& stochiometric_matrix
+                , const double big_M_value
+                , const vector_t& equilibrium_constants
+                , const double variable_metabolites_upper_bound
+                , const double variable_metabolites_lower_bound
+                ) 
     vector_t GetValues() const override;
     VecBound GetBounds() const override;
     void FillJacobianBlock( std::string var_set

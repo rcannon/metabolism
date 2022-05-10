@@ -5,3 +5,4 @@ include/eigen3
 include/ifopt
 lib64
 share
+bin

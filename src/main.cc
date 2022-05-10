@@ -1,8 +1,9 @@
 
-#include "run_maximum_entropy.hh"
+#include "includes_and_types.hh"
+#include "maximum_entropy_relaxed.hh"
 
-void
-run_maximum_entropy ()
+int
+main()
 {
     // read the concentrations data from the file
     auto concentrations_tuple = load_concentrations('./data/concentrations.csv');
@@ -58,4 +59,6 @@ run_maximum_entropy ()
     vector_t metabolite_sol = std::get<4>(results_tuple);
 
     std::cout << "optimsation done\n";
+
+    return 0;
 }

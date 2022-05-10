@@ -15,7 +15,7 @@ public:
     Variables( const std::string& name
              , const int num_variables
              , const vector_t& init_values
-             )
+             );
     void SetVariables( const vector_t& new_vars ) override;
     vector_t GetValues() const override;
     int GetNumVariables() const;

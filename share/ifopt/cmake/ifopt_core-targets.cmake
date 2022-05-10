@@ -55,7 +55,7 @@ add_library(ifopt::ifopt_core SHARED IMPORTED)
 
 set_target_properties(ifopt::ifopt_core PROPERTIES
   INTERFACE_COMPILE_FEATURES "cxx_range_for;cxx_auto_type"
-  INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include;/people/cann484/metab/eigen/include/eigen3"
+  INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include;/people/cann484/metab/include/eigen3"
 )
 
 # Load information for each installed configuration.
