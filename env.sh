@@ -7,6 +7,8 @@ module load cmake/3.21.4
 export IPOPT_DIR=/share/apps/ipopt/3.14/
 export EIGEN3_ROOT=$(pwd)/include/eigen3
 export EIGEN3_ROOT_DIR=$(pwd)/include/eigen3
+#export EIGEN3_ROOT=$(pwd)/eigen/include
+#export EIGEN3_ROOT_DIR=$(pwd)/eigen/include
 #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$IPOPT_DIR/lib
 
 #rm -rf build
