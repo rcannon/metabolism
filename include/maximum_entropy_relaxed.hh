@@ -22,7 +22,7 @@ max_ent_solver
     );
 
 vector_t
-rxn_flux
+reaction_flux
     ( vector_t v_log_counts
     , vector_t f_log_counts
     , matrix_t S

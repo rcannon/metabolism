@@ -6,7 +6,7 @@ namespace ifopt {
 
 Cost::Cost  ( const std::string& name 
             , const std::string& variable_metabolites_name 
-            , objective_reaction_indices
+            , const index_list_t& objective_reaction_indices
             ) 
             : CostTerm(name)
             , variable_metabolites_name_(variable_metabolites_name) 
@@ -30,15 +30,15 @@ Cost::FillJacobianBlock ( std::string var_set
 const override
 {
     if (var_set == variable_metabolites_name_) {
-        vector_t x = GetVariables()->GetComponent(variable_metabolites_name_)->GetValues();
-        int num_vars = GetVariables()->GetComponent(variable_metabolites_name_)->GetNumVariables();
+        // vector_t x = GetVariables()->GetComponent(variable_metabolites_name_)->GetValues()(objective_reaction_indices);
+        //int num_vars = GetVariables()->GetComponent(variable_metabolites_name_)->GetNumVariables();
 
-        for (int i = 0; i < num_vars; i++) {
+        for (int& idx : objective_reaction_indices_) {
             /*
-            Derivative of cost wrt to react variable i.
+            Derivative of cost wrt to each reaction variable i.
             Note: IFOPT will put these in correct location in overall jacobian matrix.
             */
-            jac.coeffRef(0, i) = -1.0;
+            jac.coeffRef(0, idx) = -1.0;
         }
 }
 

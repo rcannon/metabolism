@@ -44,4 +44,16 @@ const
     return n_variables_;
 }
 
+VecBound
+Variables::GetBounds() // metabolite bounds moved to constraints class
+const
+{
+    VecBound bounds(GetRows());
+    for (int i = 0; i < n_variables_; i++){
+        bounds.at(i) = NoBound; 
+    }
+    return bounds;
 }
+
+} // ifopt
+

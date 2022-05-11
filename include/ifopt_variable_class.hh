@@ -18,6 +18,7 @@ public:
              );
     void SetVariables( const vector_t& new_vars ) override;
     vector_t GetValues() const override;
+    VecBound GetBounds() const override;
     int GetNumVariables() const;
 
 private:

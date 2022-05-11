@@ -12,6 +12,7 @@ public:
     Constraints ( const std::string& name
                 , const int n_metabolites
                 , const int n_variable_metabolites
+                , const int n_reactions
                 , const vector_t& fixed_metabolites
                 , const std::string& variable_metabolites_name
                 , const std::string& flux_variables_name
@@ -21,12 +22,12 @@ public:
                 , const std::string& beta_variables_name
                 , const matrix_t& null_space_matrix
                 , const int null_space_dimension
-                , const matrix_t& stochiometric_matrix
+                , const matrix_t& stochiometric_matrix_T
                 , const double big_M_value
                 , const vector_t& equilibrium_constants
-                , const double variable_metabolites_upper_bound
+                , const vector_t& variable_metabolites_upper_bound
                 , const double variable_metabolites_lower_bound
-                ) 
+                );
     vector_t GetValues() const override;
     VecBound GetBounds() const override;
     void FillJacobianBlock( std::string var_set

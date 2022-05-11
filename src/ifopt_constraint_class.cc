@@ -3,14 +3,14 @@
 
 namespace ifopt {
 
-Constraints::Constraints( const std::string& name,
+Constraints::Constraints( const std::string& name
                         , const int n_metabolites
                         , const int n_variable_metabolites
                         , const int n_reactions
                         , const vector_t& fixed_metabolites
                         , const std::string& variable_metabolites_name
                         , const std::string& flux_variables_name
-                        , const std::string& steady_state_variables_name; // S^T * eta 
+                        , const std::string& steady_state_variables_name // S^T * eta 
                         , const std::string& h_variables_name
                         , const std::string& u_variable_name
                         , const std::string& beta_variables_name
@@ -19,10 +19,10 @@ Constraints::Constraints( const std::string& name,
                         , const matrix_t& stochiometric_matrix_T
                         , const double big_M_value
                         , const vector_t& equilibrium_constants
-                        , const double variable_metabolites_upper_bound
+                        , const vector_t& variable_metabolites_upper_bound
                         , const double variable_metabolites_lower_bound
                         ) 
-                        : ConstraintSet( 7 * n_metabolites + 2 * n_variable_metabolites 
+                        : ConstraintSet( 7 * n_reactions + 2 * n_variable_metabolites
                                        , name)
                         , n_metabolites_(n_metabolites)
                         , n_variable_metabolites_(n_variable_metabolites)
