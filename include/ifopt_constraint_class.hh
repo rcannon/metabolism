@@ -62,8 +62,8 @@ private:
     const std::string u_variables_name_;
     const std::string beta_variables_name_;
     const matrix_t null_space_matrix_;
-    const double null_space_dimension_;
-    const matrix_t stochiometric_matrix_T_;
+    const int null_space_dimension_;
+    const matrix_t stoichiometric_matrix_T_;
     const double big_M_value_;
     const vector_t equilibrium_constants_;
     const vector_t variable_metabolites_upper_bound_;

@@ -10,23 +10,23 @@
 #pragma once
 
 std::tuple<vector_t, vector_t, vector_t, vector_t, vector_t>
-max_ent_solver
-    ( matrix_t n_ini
-    , vector_t y_ini
-    , vector_t beta_ini
-    , vector_t target_log_vcounts
-    , matrix_t f_log_counts
-    , matrix_t S
-    , matrix_t K
-    , vector_t obj_rxn_idx
+maximum_entropy_solver
+    ( vector_t variable_metabolites_init // aka n
+    , vector_t fixed_metabolites
+    , vector_t flux_variables_init // aka y
+    , vector_t beta_init // \beta
+    , vector_t target_log_variable_metabolites_counts
+    , matrix_t stoichiometric_matrix
+    , vector_t equilibrium_constants // aka K
+    , index_list_t objective_reaction_indices
     );
 
 vector_t
 reaction_flux
-    ( vector_t v_log_counts
-    , vector_t f_log_counts
-    , matrix_t S
-    , matrix_t K
+    ( vector_t variable_metabolites_log_counts
+    , vector_t fixed_metabolites_log_counts
+    , matrix_t stochiometric_matrix
+    , matrix_t equilibrium_constants
     , matrix_t E_regulation
     );
 

@@ -1,7 +1,7 @@
 
 #include "maximum_entropy_relaxed.hh"
 
-namespace ifopt {
+using namespace ifopt;
 
 
 std::tuple<vector_t, vector_t, vector_t, vector_t, vector_t>
@@ -26,7 +26,6 @@ maximum_entropy_solver
 
     value_t variable_metabolite_lower_bound = -300;
     value_t big_M_value = 1000;
-    vector_t flux_variables_init_signs = flux_variables_init.array().sign().matrix();
 
     // Stoichiometric Matrix - rows are reactions, cols are metabolites
     matrix_t stoichiometric_matrix_T = stoichiometric_matrix; // this should do deep copy 
@@ -95,25 +94,28 @@ maximum_entropy_solver
 
     // add beta variables
     std::string beta_variables_name = "beta_variables";
+    size_t num_beta_variables = dim_null_space;
+    vector_t beta_variables_for_use = beta_init(Eigen::seq(0, num_beta_variables-1));
     nlp.AddVariableSet(std::make_shared<Variables>  ( beta_variables_name
-                                                    , dim_null_space
-                                                    , beta_init
+                                                    , num_beta_variables
+                                                    , beta_variables_for_use
                                                     ));
 
     // add h variables
     std::string h_variables_name = "h_variables";
+    auto flux_variables_init_signs_array = flux_variables_init.array().sign();
     auto fvia = flux_variables_init.array();
     vector_t h_init = 
-        (   flux_variables_init_signs.array()
+        (   flux_variables_init_signs_array
         *   (   std::log(2) 
             -   Eigen::log  (   fvia.abs()
                             +   (fvia.pow(2) + 4).sqrt()   
                             )
             )
         ).matrix();
-    size_t h_init_size = n_reactions;
+    size_t num_h_variables = n_reactions;
     nlp.AddVariableSet(std::make_shared<Variables>  ( h_variables_name
-                                                    , h_init_size
+                                                    , num_h_variables
                                                     , h_init
                                                     ));
 
@@ -121,11 +123,11 @@ maximum_entropy_solver
     std::string u_variable_name = "u_variables";
     vector_t u_init = 
         ( 0.5 
-        + (0.5 * flux_variables_init_signs).array()
+        + (0.5 * flux_variables_init_signs_array)
         ).matrix();
-    size_t u_init_size = n_reactions;
+    size_t num_u_variables = n_reactions;
     nlp.AddVariableSet(std::make_shared<Variables>  ( u_variable_name
-                                                    , u_init_size
+                                                    , num_u_variables
                                                     , u_init
                                                     ));
 
@@ -178,11 +180,30 @@ maximum_entropy_solver
     ipopt.Solve(nlp);
 
     // get the found variable solutions
-    vector_t metabolites_sol = nlp.GetOptVariables()->GetValues(variable_metabolites_variables_name);
-    vector_t steady_state_sol = nlp.GetOptVariables()->GetValues(steady_state_variables_name);
-    vector_t flux_sol = nlp.GetOptVariables()->GetValues(flux_variables_name);
-    vector_t beta_sol = nlp.GetOptVariables()->GetValues(beta_variables_name);
-    vector_t h_sol = nlp.GetOptVariables()->GetValues(h_variables_name);
+    // reilly: make sure these are in the same order as added to problem (nlp.AddVariableSet).
+    // hopefully github issue allows for better access
+    //
+    // note: Eigen::seq is inclusive on both ends
+    vector_t all_sols = nlp.GetOptVariables()->GetValues();
+    int begin = 0;
+    int end = num_variable_metabolites -1;
+    vector_t metabolites_sol = all_sols(Eigen::seq(begin, end));
+    begin = end+1;
+    end = begin + num_flux_variables -1;
+    vector_t flux_sol = all_sols(Eigen::seq(begin, end));
+    begin = end+1;
+    end = begin + num_steady_state_variables -1;
+    vector_t steady_state_sol = all_sols(Eigen::seq(begin, end));
+    begin = end + 1;
+    end = begin + num_beta_variables -1;
+    vector_t beta_sol = all_sols(Eigen::seq(begin, end));
+    begin = end +1;
+    end = begin + num_h_variables-1;
+    vector_t h_sol = all_sols(Eigen::seq(begin, end));
+    begin = end + 1;
+    end = begin + num_u_variables-1;
+    assert( end + 1 == all_sols.size() );
+    // not needed : vector_t u_sol = all_sols(Eigen::seq(begin, end));
 
     vector_t E_regulation = vector_t::Constant(flux_sol.size(), 1.0);
     vector_t unreq_rxn_flux = reaction_flux ( metabolites_sol
@@ -234,5 +255,3 @@ reaction_flux
 
     return result;
 }
-
-} // namespace

@@ -10,7 +10,7 @@ OBJ := $(SRC:$(SRC_DIR)/%.cc=$(OBJ_DIR)/%.o)
 
 CXXFLAGS := -g -std=c++17 -Wall -Iinclude -Iinclude/eigen3 -Iinclude/ifopt -MMD -MP 
 #CFLAGS   := -g -std=c++17 -Wall
-LDFLAGS  := -Llib
+LDFLAGS  := -Llib64 -Lifopt/build -Leigen/build
 LDLIBS   := -lm
 
 .PHONY: all clean

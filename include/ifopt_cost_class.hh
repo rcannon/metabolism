@@ -10,7 +10,7 @@ class Cost : public CostTerm {
 public:
 
     Cost( const std::string& name 
-        , const std::string& reaction_vars_name 
+        , const std::string& variable_metabolites_name
         , const index_list_t& objective_reaction_indices
         );
     double GetCost() const override;
@@ -18,7 +18,7 @@ public:
                           , Jacobian& jac
                           ) const override;
 private:
-    const std::string reaction_vars_name_;
+    const std::string variable_metabolites_name_;
     index_list_t objective_reaction_indices_;
 };
 

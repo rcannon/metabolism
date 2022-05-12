@@ -36,7 +36,7 @@ load_concentrations( const std::string& path)
     std::string line;
     std::vector<value_t> values;
 
-    vector_t res_vector;
+    //vector_t res_vector;
     size_t num_variable;
     size_t num_total;
     size_t rows = 0;
@@ -59,7 +59,7 @@ load_concentrations( const std::string& path)
         ++rows;
     }
 
-    res_vector = Map<Matrix<value_t, Dynamic, 1, RowMajor>>(values.data(), rows, values.size() / rows);
+    auto res_vector = Map<vector_t>(values.data(), values.size(), 1);
 
     return { num_variable, res_vector };
 }
@@ -127,7 +127,7 @@ load_equilibrium_constants( const std::string& path)
         }
         ++rows;
     }
-    res_vector = Map<Matrix<value_t, Dynamic, 1, RowMajor>>(values.data(), rows, values.size() / rows);
+    res_vector = Map<vector_t>(values.data(), rows, 1);
 
     return { num_uptake, num_output, obj_idxs, res_vector };
 }

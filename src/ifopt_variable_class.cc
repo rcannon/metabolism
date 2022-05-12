@@ -1,5 +1,5 @@
 
-#include "ifopt_constraint_class.hh"
+#include "ifopt_variable_class.hh"
 
 namespace ifopt {
 
@@ -24,15 +24,14 @@ Variables::Variables( const std::string& name
 
 void 
 Variables::SetVariables( const vector_t& new_vars ) 
-override
 {
-    assert(n_variables_ == new_vars.size());
+    assert(num_variables_ == new_vars.size());
     variables_ = new_vars;
 } 
 
 vector_t 
 Variables::GetValues() 
-const override
+const
 {
     return variables_;
 }
@@ -41,15 +40,15 @@ int
 Variables::GetNumVariables() 
 const
 {
-    return n_variables_;
+    return num_variables_;
 }
 
-VecBound
+Variables::VecBound
 Variables::GetBounds() // metabolite bounds moved to constraints class
 const
 {
     VecBound bounds(GetRows());
-    for (int i = 0; i < n_variables_; i++){
+    for (int i = 0; i < num_variables_; i++){
         bounds.at(i) = NoBound; 
     }
     return bounds;
