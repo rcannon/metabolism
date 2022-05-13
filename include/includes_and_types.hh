@@ -20,7 +20,7 @@
 #include "Eigen/Dense"
 
 /* Type definitions and aliases */
-#define EIGEN_DEFAULT_DENSE_INDEX_TYPE = int;
+// #define EIGEN_DEFAULT_DENSE_INDEX_TYPE = int;
 typedef double value_t;
 typedef std::vector<value_t> value_list_t;
 typedef std::vector<int> index_list_t;
