@@ -6,7 +6,7 @@
                 "${workspaceFolder}/**",
                 "/share/apps/ipopt/3.14/include/coin-or",
                 "./include",
-                "./INSTALL/include"
+                "./PREREQS_INSTALL/include"
             ],
             "defines": [],
             "compilerPath": "/share/apps/gcc/9.1.0/bin/gcc",

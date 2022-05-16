@@ -43,11 +43,11 @@ load_concentrations( const std::string& path)
 
     // read numvar
     std::getline(indata, line);
-    num_variable = std::stod(line);
+    num_variable = std::stoi(line);
 
     // read numtot
     std::getline(indata, line);
-    num_total = std::stod(line);
+    num_total = std::stoi(line);
 
     // read concentrations vector
     while (std::getline(indata, line)) {
@@ -104,18 +104,18 @@ load_equilibrium_constants( const std::string& path)
 
     // read num_uptake
     std::getline(indata, line);
-    num_uptake = std::stod(line);
+    num_uptake = std::stoi(line);
 
     // read num_output
     std::getline(indata, line);
-    num_output = std::stod(line);
+    num_output = std::stoi(line);
 
     // read obj_idxs
     std::getline(indata, line);
     std::stringstream lineStream(line);
     std::string cell;
     while (std::getline(lineStream, cell, ',')) {
-        obj_idxs.push_back(std::stod(cell));
+        obj_idxs.push_back(std::stoi(cell));
     }
 
     // read equilibrium constants vector
@@ -127,7 +127,7 @@ load_equilibrium_constants( const std::string& path)
         }
         ++rows;
     }
-    res_vector = Map<vector_t>(values.data(), rows, 1);
+    res_vector = Map<vector_t>(values.data(), values.size(), 1);
 
     return { num_uptake, num_output, obj_idxs, res_vector };
 }
@@ -138,10 +138,9 @@ load_stochiometric_matrix( const std::string& path)
     std::ifstream indata;
     indata.open(path);
     std::string line;
-    std::vector<value_t> values;
+    std::vector<double> values;
 
-    size_t rows = 0;
-
+    int rows = 0;
     // read matrix
     while (std::getline(indata, line)) {
         std::stringstream lineStream(line);
@@ -151,6 +150,6 @@ load_stochiometric_matrix( const std::string& path)
         }
         ++rows;
     }
-
-    return Map<Matrix<value_t, Dynamic, Dynamic, RowMajor>>(values.data(), rows, values.size() / rows);
+    // Matrix<double, Dynamic, Dynamic, RowMajor>
+    return Map<matrix_t>(values.data(), rows, values.size() / rows);
 }

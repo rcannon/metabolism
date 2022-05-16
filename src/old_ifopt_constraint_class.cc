@@ -21,7 +21,7 @@ Constraints::Constraints( const std::string& name
                         , const vector_t& equilibrium_constants
                         , const vector_t& variable_metabolites_upper_bound
                         , const double variable_metabolites_lower_bound
-                        ) 
+                        )
                         : ConstraintSet( 7 * n_reactions + 2 * n_variable_metabolites
                                        , name)
                         , n_metabolites_(n_metabolites)
@@ -42,17 +42,11 @@ Constraints::Constraints( const std::string& name
                         , variable_metabolites_upper_bound_(variable_metabolites_upper_bound)
                         , variable_metabolites_lower_bound_(variable_metabolites_lower_bound)
 {
-    assert(n_variable_metabolites_ == GetVariablesVectorByName(variable_metabolites_name_).size());
     assert(fixed_metabolites_.size() == n_metabolites_ - n_variable_metabolites_);
-    assert(GetVariablesVectorByName(flux_variables_name_).size() == n_reactions_);
-    assert(GetVariablesVectorByName(steady_state_variables_name_).size() == n_reactions_);
-    assert(GetVariablesVectorByName(h_variables_name_).size() == n_reactions_);
-    assert(GetVariablesVectorByName(u_variables_name_).size() == n_reactions_);
     assert(null_space_matrix_.rows() == n_reactions_);
     assert(null_space_matrix_.cols() == null_space_dimension_);
-    assert(GetVariablesVectorByName(beta_variables_name_).size() == null_space_dimension_);
-    assert(stoichiometric_matrix_T_.rows() == n_metabolites_);
-    assert(stoichiometric_matrix_T_.cols() == n_reactions_);
+    assert(stoichiometric_matrix_T_.rows() == n_reactions_);
+    assert(stoichiometric_matrix_T_.cols() == n_metabolites_);
     assert(equilibrium_constants_.size() == n_reactions_);
     assert(variable_metabolites_upper_bound_.minCoeff() > variable_metabolites_lower_bound_);
 }
@@ -72,6 +66,8 @@ Constraints::GetValues() const
 
     vector_t result(GetRows()); // result vector to be returned
 
+    std::cout << "\nhere get vals begin\n";
+
     result << CalculateNullSpaceRepresentationConstraint() // MEPPF 94
             , CalculateSteadyStateConstraint()             // MEPPF 95
             , CalculateSmoothConstraint()                  // MEPPF 96
@@ -82,6 +78,8 @@ Constraints::GetValues() const
             , CalculateMetabolitesUpperBoundConstraint()   // MEPPF 101 upper
             , CalculateMetaboliteLowerBoundConstraint();   // MEPPF 101 lower
 
+    std::cout << "\nhere get vals end\n";
+
     return result;
 }
 
@@ -89,6 +87,7 @@ Constraints::VecBound
 Constraints::GetBounds() 
 const
 {
+    std::cout << "\nhere get bounds begin\n";
     VecBound b(GetRows());
 
     assert(b.end() == (b.begin() + 7 * n_reactions_ + 2 * n_variable_metabolites_));
@@ -139,6 +138,8 @@ const
     assert(next_end == b.end());
     std::fill( next_begin , next_end , Bounds(-inf, 0.0) ); 
 
+    std::cout << "\nhere get bounds end\n";
+
     return b;
 }
 
@@ -148,7 +149,7 @@ Constraints::FillJacobianBlock( std::string var_set
                               ) 
 const
 {
-
+    std::cout << "\nhere fill jac begin\n";
     int row;
     int col;
     int diag;
@@ -175,6 +176,7 @@ const
     if (var_set == variable_metabolites_name_) {
         // aka \eta in MEPPF
         end = n_variable_metabolites_;
+        std::cout << "\nhere fill jac end\n";
 
         // MEPPF 95
         col_offset = 0;
@@ -371,6 +373,7 @@ const
                               = 2.0;
         }
     }
+
 }
 
 vector_t 

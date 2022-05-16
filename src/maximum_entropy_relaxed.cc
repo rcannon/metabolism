@@ -52,6 +52,7 @@ maximum_entropy_solver
     matrix_t null_space_stoich_matrix_variable_metab_section = lu_decomp.kernel();
     size_t dim_null_space = lu_decomp.dimensionOfKernel();
 
+
     // precompute SVS
     matrix_t svs_matrix =   ( stoich_matrix_variable_metab_section 
                             * stoich_matrix_variable_metab_section_T
@@ -163,21 +164,22 @@ maximum_entropy_solver
                                                         , target_log_variable_metabolites_counts
                                                         , variable_metabolite_lower_bound
                                                         ));
-
     //
     // run the solver
     //
-    
+
     // print out initial state
     nlp.PrintCurrent();
 
     // initialize solver
     ifopt::IpoptSolver ipopt;
-    ipopt.SetOption("linear_solver", "ma57"); // change if desired
+    ipopt.SetOption("linear_solver", "mumps"); // change if desired
     ipopt.SetOption("jacobian_approximation", "exact"); // keep this because we specified jacobians
 
     // solve the problem
     ipopt.Solve(nlp);
+
+    std::cout << "\nhere max ent\n";
 
     // get the found variable solutions
     // reilly: make sure these are in the same order as added to problem (nlp.AddVariableSet).
