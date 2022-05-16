@@ -10,12 +10,12 @@ namespace ifopt {
 NullSpaceRepresentationConstraint::NullSpaceRepresentationConstraint
     ( const string& name
     , const int n_reactions
-    , const string& beta_variables_name
-    , const string& flux_variables_name
-    , const matrix& null_space_matrix
+    , const std::string& beta_variables_name
+    , const std::string& flux_variables_name
+    , const matrix_t& null_space_matrix
     , const int dim_null_space
     )
-    : ConstraintSet(n_reactions + dim_null_space, name)
+    : ConstraintSet(n_reactions, name)
     , n_reactions_(n_reactions)
     , beta_variables_name_(beta_variables_name)
     , flux_variables_name_(flux_variables_name)
@@ -40,6 +40,16 @@ const
     return result;
 }
 
+ConstraintSet::VecBound
+NullSpaceRepresentationConstraint()
+const
+{
+    VecBound b(GetRows());
+    std::fill(b.begin(), b.end(), Bounds(0.0, 0.0));
+
+    return b;
+}
+
 //
 // End NullSpaceRepresentationConstraint
 //
@@ -58,7 +68,7 @@ SteadyStateConstraint::SteadyStateConstraint
     , const std::string& stead_state_variables_name
     , const matrix_t& stoichiometric_matrix_T
     )
-    : ConstraintSet(name, n_variable_metabolites + n_reactions )
+    : ConstraintSet(n_reactions, name )
     , n_reactions_(n_reactions)
     , n_metabolites_(n_metabolites)
     , n_variable_metabolites_(n_variable_metabolites)
@@ -89,6 +99,16 @@ const
     return result;
 }
 
+ConstraintSet::VecBound
+SteadyStateConstraint::GetBounds()
+const
+{
+    VecBound b(GetRows());
+    std::fill(b.begin(), b.end(), Bounds(0.0, 0.0));
+
+    return b;
+}
+
 //
 // End SteadyStateConstraint
 //
@@ -103,7 +123,7 @@ SmoothConstraint::SmoothConstraint
     , const std::string& flux_variables_name
     , const std::string& h_variables_name
     )
-    : ConstraintSet(2 * n_reactions, name)
+    : ConstraintSet(n_reactions, name)
     , n_reactions_(n_reactions)
     , flux_variables_name_(flux_variables_name)
     , h_variables_name_(h_variables_name)
@@ -132,6 +152,16 @@ const
     return result.matrix();
 }
 
+ConstraintSet::VecBound
+SmoothConstraint::GetBounds()
+const
+{
+    VecBound b(GetRows());
+    std::fill(b.begin(), b.end(), Bounds(0.0, 0.0));
+
+    return b;
+}
+
 //
 // End SmoothConstraint
 //
@@ -149,7 +179,7 @@ RelaxedFluxUpperConstraint::RelaxedFluxUpperConstraint
     , const double big_M_value
     , const vector_t& equilibrium_constants
     )
-    : ConstraintSet( 3 * n_reactions, name)
+    : ConstraintSet( n_reactions, name)
     , n_reactions_(n_reactions)
     , steady_state_variables_name_(steady_state_variables_name)
     , h_variables_name_(h_variables_name)
@@ -176,6 +206,16 @@ const
     return result;
 }
 
+ConstraintSet::VecBound
+RelaxedFluxUpperConstraint::GetBounds()
+const
+{
+    VecBound b(GetRows());
+    std::fill(b.begin(), b.end(), Bounds(-inf, 0.0));
+
+    return b;
+}
+
 //
 // End RelaxedFluxUpperConstraint
 //
@@ -193,7 +233,7 @@ RelaxedFluxLowerConstraint:RelaxedFluxLowerConstraint
     , const double big_M_value
     , const vector_t& equilibrium_constants
     )
-    : ConstraintSet( 3 * n_reactions, name)
+    : ConstraintSet( n_reactions, name)
     , n_reactions_(n_reactions)
     , steady_state_variables_name_(steady_state_variables_name)
     , h_variables_name_(h_variables_name)
@@ -221,6 +261,16 @@ const
     return result;
 }
 
+ConstraintSet::VecBound
+RelaxedFluxLowerConstraint::GetBounds()
+const
+{
+    VecBound b(GetRows());
+    std::fill(b.begin(), b.end(), Bounds(0.0, +inf));
+
+    return b;
+}
+
 //
 // End RelaxedFLuxLowerConstraint
 //
@@ -234,11 +284,13 @@ SignConstraint::SignConstraint
     , const int n_reactions
     , const std::string& steady_state_variable_names
     , const std::string& flux_variable_names
+    , const vector_t equilibrium_constants
     )
-    : ConstraintSet(2 * n_reactions, name)
+    : ConstraintSet( n_reactions, name)
     , n_reactions_(n_reactions)
     , steady_state_variable_names_(steady_state_variable_names)
     , flux_variable_names_(flux_variable_names)
+    , equilibrium_constants_(equilibrium_constants)
 {}
 
 vector_t
@@ -256,6 +308,16 @@ const
     return result.matrix();
 }
 
+ConstraintSet::VecBound
+SignConstraint::GetBounds()
+const
+{
+    VecBound b(GetRows());
+    std::fill(b.begin(), b.end(), Bounds(0.0, +inf));
+
+    return b;
+}
+
 //
 // End SignConstraint
 //
@@ -270,7 +332,7 @@ RelaxedFluxSignConstraint::RelaxedFluxSignConstraint
     , const std::string& flux_variables_name
     , const std::string& u_variables_name
     )
-    : ConstraintSet(2 * n_reactions, name)
+    : ConstraintSet( n_reactions, name)
     , n_reactions_(n_reactions)
     , flux_variables_name_(flux_variables_name)
     , u_variables_name_(u_variables_name)
@@ -289,6 +351,16 @@ const
     auto result = (2 * u_variables_array) - 1 - sign_fluxes;
 
     return result.matrix();
+}
+
+ConstraintSet::VecBound
+RelaxedFluxSignConstraint::GetBounds()
+const
+{
+    VecBound b(GetRows());
+    std::fill(b.begin(), b.end(), Bounds(0.0, 0.0));
+
+    return b;
 }
 
 //
@@ -325,6 +397,16 @@ const
     return result.matrix();
 }
 
+ConstraintSet::VecBound
+MetabolitesUpperBoundConstraint::GetBounds()
+const
+{
+    VecBound b(GetRows());
+    std::fill(b.begin(), b.end(), Bounds(0.0, +inf));
+
+    return b;
+}
+
 //
 // End MetabolitesUpperBoundConstraint
 //
@@ -337,12 +419,12 @@ MetabolitesLowerBoundConstraint::MetabolitesLowerBoundConstraint
     ( const std::string& name
     , const int n_variable_metabolites
     , const std::string& variables_metabolites_name
-    , const vector_t& variable_metabolites_upper_bound
+    , const vector_t& variable_metabolites_lower_bound
     )
     : ConstraintSet(n_variable_metabolites, name)
     , n_variable_metabolites_(n_variable_metabolites)
     , variables_metabolites_name_(variables_metabolites_name)
-    , variable_metabolites_upper_bound_(variable_metabolites_upper_bound)
+    , variable_metabolites_lower_bound_(variable_metabolites_upper_bound)
 {}
 
 vector_t
@@ -357,6 +439,16 @@ const
     auto result = variable_metabolites_lower_bound_ - metabolites_array;
 
     return result.matrix();
+}
+
+ConstraintSet::VecBound
+MetabolitesLowerBoundConstraint::GetBounds()
+const
+{
+    VecBound b(GetRows());
+    std::fill(b.begin(), b.end(), Bounds(-inf, 0.0));
+
+    return b;
 }
 
 //
