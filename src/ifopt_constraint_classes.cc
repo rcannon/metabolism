@@ -10,15 +10,15 @@ namespace ifopt {
 NullSpaceRepresentationConstraint::NullSpaceRepresentationConstraint
     ( const string& name
     , const int n_reactions
-    , const std::string& beta_variables_name
     , const std::string& flux_variables_name
+    , const std::string& beta_variables_name
     , const matrix_t& null_space_matrix
     , const int dim_null_space
     )
     : ConstraintSet(n_reactions, name)
     , n_reactions_(n_reactions)
-    , beta_variables_name_(beta_variables_name)
     , flux_variables_name_(flux_variables_name)
+    , beta_variables_name_(beta_variables_name)
     , null_space_matrix_(null_space_matrix)
     , dim_null_space_(dim_null_space)
 {
@@ -50,6 +50,31 @@ const
     return b;
 }
 
+void
+NullSpaceRepresentationConstraint::FillJacobianBlock
+    ( std::string var_set
+    , Jacobian& jac_block
+    )
+const
+{
+    int row_end = n_reactions_;
+
+    if (var_set == flux_variables_name_) {
+        // aka y in MEPPF
+        for (int diag = 0; diag < row_end; diag++) {
+            jac_block.coeffRef(diag, diag) = -1.0;
+        }
+    }
+    else if (var_set == beta_variables_name_) {
+        // aka \beta in MEPPF
+        for (int row = 0; row < row_end; row++) {
+            for (int col = 0; col < dim_null_space_; col++) {
+                jac_block.coeffRef(row, col) = null_space_matrix_(row,col);
+            }
+        }
+    }
+}
+
 //
 // End NullSpaceRepresentationConstraint
 //
@@ -66,7 +91,8 @@ SteadyStateConstraint::SteadyStateConstraint
     , const vector_t& fixed_metabolites
     , const std::string& variable_metabolites_name
     , const std::string& stead_state_variables_name
-    , const matrix_t& stoichiometric_matrix_T
+    , const matrix_t& variable_metabolite_stoich_matrix_T
+    , const matrix_t& fixed_metabolite_stoich_matrix_T
     )
     : ConstraintSet(n_reactions, name )
     , n_reactions_(n_reactions)
@@ -75,11 +101,14 @@ SteadyStateConstraint::SteadyStateConstraint
     , fixed_metabolites_(fixed_metabolites)
     , variable_metabolites_name_(variable_metabolites_name)
     , steady_state_variables_name_(stead_state_variables_name)
-    , stoichiometric_matrix_T_(stoichiometric_matrix_T)
+    , variable_metabolite_stoich_matrix_T_(variable_metabolite_stoich_matrix_T)
+    , fixed_metabolite_stoich_matrix_T_(fixed_metabolite_stoich_matrix_T)
 {
     assert(fixed_metabolites_.size() == n_metabolites_ - n_variable_metabolites_);
-    assert(stoichiometric_matrix_T_.rows() == n_reactions_);
-    assert(stoichiometric_matrix_T_.cols() == n_metabolites_);
+    assert(variable_metabolite_stoich_matrix_T_.rows() == n_reactions_);
+    assert(variable_metabolite_stoich_matrix_T_.cols() == n_variable_metabolites_);
+    assert(fixed_metabolite_stoich_matrix_T_.rows() == n_reactions_);
+    assert(fixed_metabolite_stoich_matrix_T_.cols() == fixed_metabolites_.size());
 }
 
 vector_t 
@@ -89,12 +118,11 @@ const
     // Maximum Entropy Production Problem Formulation 95
 
     vector_t steady_state_variables = GetVariables()->GetComponent(steady_state_variables_name_)->GetValues();
-
     vector_t variable_metabolites = GetVariables()->GetComponent(variable_metabolites_name_)->GetValues();
-    vector_t all_metabolites( n_metabolites_ );
-    metabolites << variable_metabolites, fixed_metabolites_;
 
-    vector_t result = ((stoichiometric_matrix_T_ * metabolites) - steady_state_variables);
+    vector_t result = (variable_metabolite_stoich_matrix_T_ * variable_metabolites) 
+                    + (fixed_metabolite_stoich_matrix_T_ * fixed_metabolites_)
+                    - steady_state_variables;
 
     return result;
 }
@@ -107,6 +135,32 @@ const
     std::fill(b.begin(), b.end(), Bounds(0.0, 0.0));
 
     return b;
+}
+
+void
+SteadyStateConstraint::FillJacobianBlock
+    ( std::string var_set
+    , Jacobian& jac_block
+    )
+const
+{
+    int row_end = n_reactions_;
+
+    if (var_set == variable_metabolites_name_) {
+        // aka \eta in MEPPF
+        for (int row = 0; row < row_end; row++) {
+            for (int col = 0; col < n_variable_metabolites_) {
+                jac_block.coeffRef(row, col) = variable_metabolite_stoich_matrix_T_(row, col);
+            }
+        }
+    }
+    else if (var_set == steady_state_variables_name_) {
+        // aka g in MEPPF
+        for (int diag = 0; diag < row_end; diag++) {
+            jac_block.coeffRef( diag, diag ) = -1.0;
+        }
+
+    }
 }
 
 //
@@ -162,6 +216,40 @@ const
     return b;
 }
 
+void
+SmoothConstraint::FillJacobianBlock
+    ( std::string var_set
+    , Jacobian& jac_block
+    )
+const
+{
+    int row_end = n_reactions_;
+
+    if (var_set == flux_variable_name_) {
+        // aka y in MEPPF
+        vector_t gradient = CalculateSmoothConstraintGradientFluxVariables().eval();
+        for (int diag = 0; diag < row_end; diag ++) {
+            jac_block.coeffRef( diag , diag ) = gradient(diag);
+        }
+    }
+    else if (var_set == h_variables_name_) {
+        // aka h in MEPPF
+        for (int diag = 0; diag < row_end; diag++) {
+            jac_block.coeffRef(diag, diag) = -1.0;
+        }
+    }
+}
+
+vector_t
+SmoothConstraint::CalculateSmoothConstraintGradientFluxVariables()
+const
+{
+    auto flux_array_squared = GetVariables()->GetComponent(flux_variables_name_)->GetValues().array().pow(2);
+    auto result = (flux_array_squared + 4).sqrt().inverse();
+
+    return result.matrix();
+}
+
 //
 // End SmoothConstraint
 //
@@ -214,6 +302,34 @@ const
     std::fill(b.begin(), b.end(), Bounds(-inf, 0.0));
 
     return b;
+}
+
+void
+RelaxedFluxUpperConstraint::FillJacobianBlock
+    ( std::string var_set
+    , Jacobian& jac_block
+    )
+const
+{
+    int row_end = n_reactions_;
+
+    if (var_set == steady_state_variables_name_) {
+        // aka g in MEPPF
+        for (diag = 0; diag < row_end; diag++) {
+            jac_block.coeffRef( diag, diag) = -1.0;
+        }
+
+    }
+    else if (var_set == h_variables_name_) {
+        for (diag = 0; diag < row_end; diag++) {
+            jac_block.coeffRef( diag, diag) = 1.0;
+        }
+    }
+    else if (var_set == u_variables_name_) {
+        for (diag = 0; diag < row_end; diag++) {
+            jac_block.coeffRef( diag, diag ) = -big_M_value_;
+        }
+    }
 }
 
 //
@@ -271,6 +387,34 @@ const
     return b;
 }
 
+void
+RelaxedFluxLowerConstraint::FillJacobianBlock
+    ( std::string var_set
+    , Jacobian& jac_block
+    )
+const
+{
+    int row_end = n_reactions_;
+
+    if (var_set == steady_state_variables_name_) {
+        // aka g in MEPPF
+        for (diag = 0; diag < row_end; diag++) {
+            jac_block.coeffRef( diag, diag) = -1.0;
+        }
+
+    }
+    else if (var_set == h_variables_name_) {
+        for (diag = 0; diag < row_end; diag++) {
+            jac_block.coeffRef( diag, diag) = 1.0;
+        }
+    }
+    else if (var_set == u_variables_name_) {
+        for (diag = 0; diag < row_end; diag++) {
+            jac_block.coeffRef( diag, diag ) = -big_M_value_;
+        }
+    }
+}
+
 //
 // End RelaxedFLuxLowerConstraint
 //
@@ -282,14 +426,14 @@ const
 SignConstraint::SignConstraint
     ( const std::string& name
     , const int n_reactions
-    , const std::string& steady_state_variable_names
-    , const std::string& flux_variable_names
+    , const std::string& steady_state_variables_name
+    , const std::string& flux_variables_name
     , const vector_t equilibrium_constants
     )
     : ConstraintSet( n_reactions, name)
     , n_reactions_(n_reactions)
-    , steady_state_variable_names_(steady_state_variable_names)
-    , flux_variable_names_(flux_variable_names)
+    , steady_state_variables_names_(steady_state_variables_names)
+    , flux_variables_name_(flux_variables_name)
     , equilibrium_constants_(equilibrium_constants)
 {}
 
@@ -316,6 +460,52 @@ const
     std::fill(b.begin(), b.end(), Bounds(0.0, +inf));
 
     return b;
+}
+
+void
+SignConstraint::FillJacobianBlock
+    ( std::string var_set
+    , Jacobian& jac_block
+    )
+const
+{
+    int row_end = n_reactions_;
+
+    if (var_set == flux_variables_name_) {
+        // aka y in MEPPF
+        vector_t gradient = CalculateSignConstraintGadientFluxVariables().eval();
+        for (int diag = 0; diag < row_end; diag ++) {
+            jac_block.coeffRef( diag, diag ) = gradient(diag);
+        }
+
+    }
+    else if (var_set == steady_state_variables_name_) {
+        // aka g in MEPPF
+        vector_t gradient = CalculateSignConstraintGradientSteadyStateVariables().eval();
+        for (int diag = 0; diag < row_end; diag++) {
+            jac_block.coeffRef( diag, diag ) = gradient(diag);
+        }
+    }
+}
+
+vector_t
+SignConstraint::CalculateSignConstraintGadientFluxVariables() 
+const
+{
+    auto steady_state_variables = GetVariables()->GetComponent(steady_state_variables_name_)->GetValues();
+    vector_t result = equilibrium_constants_.array().log().matrix() - steady_state_variables;
+
+    return result;
+}
+
+vector_t
+SignConstraint::CalculateSignConstraintGradientSteadyStateVariables()
+const
+{
+    vector_t flux_variables = GetVariables()->GetComponent(flux_variables_name_)->GetValues();
+    vector_t result = -1.0 * flux_variables;
+
+    return result;
 }
 
 //
@@ -363,6 +553,28 @@ const
     return b;
 }
 
+void
+RelaxedFluxSignConstraint::FillJacobianBlock
+    ( std::string var_set
+    , Jacobian& jac_block
+    )
+const
+{
+    int row_end = n_reactions_;
+
+    if (var_set == flux_variables_name_){
+        // see MEPPF, thrid bullet point above (92)
+        for (int diag =0; diag < row_end; diag++) {
+            jac_block.coeffRef(diag, diag) = 0.0;
+        }
+    }
+    else if (var_set == u_variables_name_){
+        for (int diag = 0; diag < row_end; diag++) {
+            jac_block.coeffRef( diag, diag) = 2.0;
+        }
+    }
+}
+
 //
 // End RelaxedFluxSignConstraint
 //
@@ -407,6 +619,23 @@ const
     return b;
 }
 
+void
+MetabolitesUpperBoundConstraint::FillJacobianBlock
+    ( std::string var_set
+    , Jacobian& jac_block
+    )
+const
+{
+    int row_end = n_variable_metabolites_;
+
+    if (var_set == variable_metabolites_name_){
+
+        for (int diag = 0; diag < row_end; diag++) {
+            jac_block.coeffRef( diag, diag ) = -1.0;
+        }
+    }
+}
+
 //
 // End MetabolitesUpperBoundConstraint
 //
@@ -449,6 +678,23 @@ const
     std::fill(b.begin(), b.end(), Bounds(-inf, 0.0));
 
     return b;
+}
+
+void
+MetabolitesLowerBoundConstraint::FillJacobianBlock
+    ( std::string var_set
+    , Jacobian& jac_block
+    )
+const
+{
+    int row_end = n_variable_metabolites_;
+
+    if (var_set == variable_metabolites_name_){
+
+        for (int diag = 0; diag < row_end; diag++) {
+            jac_block.coeffRef( diag, diag ) = -1.0;
+        }
+    }
 }
 
 //

@@ -39,7 +39,8 @@ private:
     const vector_t fixed_metabolites_;
     const std::string variable_metabolites_name_;
     const std::string stead_state_variables_name_;
-    const matrix_t stoichiometric_matrix_T_;
+    const matrix_t variable_metabolite_stoich_matrix_T
+    const matrix_t fixed_metabolite_stoich_matrix_T
 }
 
 
@@ -53,6 +54,7 @@ public:
                             , Jacobian& jac_block
                             ) const override;
 private:
+    vector_t CalculateSmoothConstraintGradientFluxVariables() const;
     const int n_reactions_;
     const std::string flux_variables_name_;
     const std::string h_variables_name_;
@@ -107,6 +109,8 @@ public:
                             , Jacobian& jac_block
                             ) const override;
 private:
+    vector_t CalculateSignConstraintGadientFluxVariables() const;
+    vector_t CalculateSignConstraintGradientSteadyStateVariables() const;
     const int n_reactions_;
     const std::string steady_state_variable_names_;
     const std::string flux_variable_names_;
