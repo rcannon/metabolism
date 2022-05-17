@@ -1,7 +1,7 @@
 
 #include "includes_and_types.hh"
 #include "ifopt_variable_class.hh"
-#include "ifopt_constraint_class.hh"
+#include "ifopt_constraint_classes.hh"
 #include "ifopt_cost_class.hh"
 #include <ifopt/problem.h>
 #include <ifopt/ipopt_solver.h>

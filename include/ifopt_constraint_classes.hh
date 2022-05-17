@@ -8,8 +8,9 @@ namespace ifopt {
 
 class NullSpaceRepresentationConstraint : public ConstraintSet {
     // MEPPF 94
+public:
     NullSpaceRepresentationConstraint
-        ( const string& name
+        ( const std::string& name
         , const int n_reactions
         , const std::string& flux_variables_name
         , const std::string& beta_variables_name
@@ -25,9 +26,9 @@ private:
     const int n_reactions_;
     const std::string beta_variables_name_;
     const std::string flux_variables_name_;
-    const matrix_t null_space_matrix;
-    const int dim_null_space;
-}
+    const matrix_t null_space_matrix_;
+    const int dim_null_space_;
+};
 
 
 class SteadyStateConstraint : public ConstraintSet {
@@ -55,10 +56,10 @@ private:
     const int n_variable_metabolites_;
     const vector_t fixed_metabolites_;
     const std::string variable_metabolites_name_;
-    const std::string stead_state_variables_name_;
-    const matrix_t variable_metabolite_stoich_matrix_T
-    const matrix_t fixed_metabolite_stoich_matrix_T
-}
+    const std::string steady_state_variables_name_;
+    const matrix_t variable_metabolite_stoich_matrix_T_;
+    const matrix_t fixed_metabolite_stoich_matrix_T_;
+};
 
 
 class SmoothConstraint : public ConstraintSet {
@@ -80,7 +81,7 @@ private:
     const int n_reactions_;
     const std::string flux_variables_name_;
     const std::string h_variables_name_;
-}
+};
 
 
 class RelaxedFluxUpperConstraint : public ConstraintSet {
@@ -107,7 +108,7 @@ private:
     const std::string u_variables_name_;
     const double big_M_value_;
     const vector_t equilibrium_constants_;
-}
+};
 
 
 class RelaxedFluxLowerConstraint : public ConstraintSet {
@@ -134,7 +135,7 @@ private:
     const std::string u_variables_name_;
     const double big_M_value_;
     const vector_t equilibrium_constants_;
-}
+};
 
 
 class SignConstraint : public ConstraintSet {
@@ -156,10 +157,10 @@ private:
     vector_t CalculateSignConstraintGadientFluxVariables() const;
     vector_t CalculateSignConstraintGradientSteadyStateVariables() const;
     const int n_reactions_;
-    const std::string steady_state_variable_names_;
-    const std::string flux_variable_names_;
+    const std::string steady_state_variables_name_;
+    const std::string flux_variables_name_;
     const vector_t equilibrium_constants_;
-}
+};
 
 
 class RelaxedFluxSignConstraint : public ConstraintSet {
@@ -180,7 +181,7 @@ private:
     const int n_reactions_;
     const std::string flux_variables_name_;
     const std::string u_variables_name_;
-}
+};
 
 
 class MetabolitesUpperBoundConstraint : public ConstraintSet {
@@ -189,7 +190,7 @@ public:
     MetabolitesUpperBoundConstraint
         ( const std::string& name
         , const int n_variable_metabolites
-        , const std::string& variables_metabolites_name
+        , const std::string& variable_metabolites_name
         , const vector_t& variable_metabolites_upper_bound
         );
     vector_t GetValues() const override;
@@ -199,9 +200,9 @@ public:
                             ) const override;
 private:
     const int n_variable_metabolites_;
-    const std::string variables_metabolites_name_;
+    const std::string variable_metabolites_name_;
     const vector_t variable_metabolites_upper_bound_;
-}
+};
 
 
 class MetabolitesLowerBoundConstraint : public ConstraintSet {
@@ -220,8 +221,8 @@ public:
                             ) const override;
 private:
     const int n_variable_metabolites_;
-    const std::string variables_metabolites_name_;
+    const std::string variable_metabolites_name_;
     const double variable_metabolites_lower_bound_;
-}
+};
 
 } // namespace ifopt

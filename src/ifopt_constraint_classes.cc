@@ -8,7 +8,7 @@ namespace ifopt {
 //
 
 NullSpaceRepresentationConstraint::NullSpaceRepresentationConstraint
-    ( const string& name
+    ( const std::string& name
     , const int n_reactions
     , const std::string& flux_variables_name
     , const std::string& beta_variables_name
@@ -41,7 +41,7 @@ const
 }
 
 ConstraintSet::VecBound
-NullSpaceRepresentationConstraint()
+NullSpaceRepresentationConstraint::GetBounds()
 const
 {
     VecBound b(GetRows());
@@ -149,7 +149,7 @@ const
     if (var_set == variable_metabolites_name_) {
         // aka \eta in MEPPF
         for (int row = 0; row < row_end; row++) {
-            for (int col = 0; col < n_variable_metabolites_) {
+            for (int col = 0; col < n_variable_metabolites_; col++) {
                 jac_block.coeffRef(row, col) = variable_metabolite_stoich_matrix_T_(row, col);
             }
         }
@@ -225,7 +225,7 @@ const
 {
     int row_end = n_reactions_;
 
-    if (var_set == flux_variable_name_) {
+    if (var_set == flux_variables_name_) {
         // aka y in MEPPF
         vector_t gradient = CalculateSmoothConstraintGradientFluxVariables().eval();
         for (int diag = 0; diag < row_end; diag ++) {
@@ -275,7 +275,7 @@ RelaxedFluxUpperConstraint::RelaxedFluxUpperConstraint
     , big_M_value_(big_M_value)
     , equilibrium_constants_(equilibrium_constants)
 {
-    assert(equilibrium_constants_.size() == n_reactions_)
+    assert(equilibrium_constants_.size() == n_reactions_);
 }
 
 vector_t
@@ -286,7 +286,7 @@ const
     
     vector_t h_variables = GetVariables()->GetComponent(h_variables_name_)->GetValues();
     vector_t u_variables = GetVariables()->GetComponent(u_variables_name_)->GetValues();
-    vector_t steady_state_variables = GetVariables()->GetComponent()(steady_state_variables_name_)->GetValues();
+    vector_t steady_state_variables = GetVariables()->GetComponent(steady_state_variables_name_)->GetValues();
     vector_t log_equilibrium_constants = equilibrium_constants_.array().log().matrix();
 
     vector_t result = h_variables - (big_M_value_ * u_variables) + log_equilibrium_constants - steady_state_variables;
@@ -315,18 +315,18 @@ const
 
     if (var_set == steady_state_variables_name_) {
         // aka g in MEPPF
-        for (diag = 0; diag < row_end; diag++) {
+        for (int diag = 0; diag < row_end; diag++) {
             jac_block.coeffRef( diag, diag) = -1.0;
         }
 
     }
     else if (var_set == h_variables_name_) {
-        for (diag = 0; diag < row_end; diag++) {
+        for (int diag = 0; diag < row_end; diag++) {
             jac_block.coeffRef( diag, diag) = 1.0;
         }
     }
     else if (var_set == u_variables_name_) {
-        for (diag = 0; diag < row_end; diag++) {
+        for (int diag = 0; diag < row_end; diag++) {
             jac_block.coeffRef( diag, diag ) = -big_M_value_;
         }
     }
@@ -340,7 +340,7 @@ const
 // RelaxedFLuxLowerConstraint
 //
 
-RelaxedFluxLowerConstraint:RelaxedFluxLowerConstraint
+RelaxedFluxLowerConstraint::RelaxedFluxLowerConstraint
     ( const std::string& name
     , const int n_reactions
     , const std::string& steady_state_variables_name
@@ -357,7 +357,7 @@ RelaxedFluxLowerConstraint:RelaxedFluxLowerConstraint
     , big_M_value_(big_M_value)
     , equilibrium_constants_(equilibrium_constants)
 {
-    assert(equilibrium_constants_.size() == n_reactions_)
+    assert(equilibrium_constants_.size() == n_reactions_);
 }
 
 vector_t
@@ -398,18 +398,18 @@ const
 
     if (var_set == steady_state_variables_name_) {
         // aka g in MEPPF
-        for (diag = 0; diag < row_end; diag++) {
+        for (int diag = 0; diag < row_end; diag++) {
             jac_block.coeffRef( diag, diag) = -1.0;
         }
 
     }
     else if (var_set == h_variables_name_) {
-        for (diag = 0; diag < row_end; diag++) {
+        for (int diag = 0; diag < row_end; diag++) {
             jac_block.coeffRef( diag, diag) = 1.0;
         }
     }
     else if (var_set == u_variables_name_) {
-        for (diag = 0; diag < row_end; diag++) {
+        for (int diag = 0; diag < row_end; diag++) {
             jac_block.coeffRef( diag, diag ) = -big_M_value_;
         }
     }
@@ -432,7 +432,7 @@ SignConstraint::SignConstraint
     )
     : ConstraintSet( n_reactions, name)
     , n_reactions_(n_reactions)
-    , steady_state_variables_names_(steady_state_variables_names)
+    , steady_state_variables_name_(steady_state_variables_name)
     , flux_variables_name_(flux_variables_name)
     , equilibrium_constants_(equilibrium_constants)
 {}
@@ -586,12 +586,12 @@ const
 MetabolitesUpperBoundConstraint::MetabolitesUpperBoundConstraint
     ( const std::string& name
     , const int n_variable_metabolites
-    , const std::string& variables_metabolites_name
+    , const std::string& variable_metabolites_name
     , const vector_t& variable_metabolites_upper_bound
     )
     : ConstraintSet(n_variable_metabolites, name)
     , n_variable_metabolites_(n_variable_metabolites)
-    , variables_metabolites_name_(variables_metabolites_name)
+    , variable_metabolites_name_(variable_metabolites_name)
     , variable_metabolites_upper_bound_(variable_metabolites_upper_bound)
 {}
 
@@ -647,13 +647,13 @@ const
 MetabolitesLowerBoundConstraint::MetabolitesLowerBoundConstraint
     ( const std::string& name
     , const int n_variable_metabolites
-    , const std::string& variables_metabolites_name
+    , const std::string& variable_metabolites_name
     , const double variable_metabolites_lower_bound
     )
     : ConstraintSet(n_variable_metabolites, name)
     , n_variable_metabolites_(n_variable_metabolites)
-    , variables_metabolites_name_(variables_metabolites_name)
-    , variable_metabolites_lower_bound_(variable_metabolites_upper_bound)
+    , variable_metabolites_name_(variable_metabolites_name)
+    , variable_metabolites_lower_bound_(variable_metabolites_lower_bound)
 {}
 
 vector_t
