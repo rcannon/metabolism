@@ -648,7 +648,7 @@ MetabolitesLowerBoundConstraint::MetabolitesLowerBoundConstraint
     ( const std::string& name
     , const int n_variable_metabolites
     , const std::string& variables_metabolites_name
-    , const vector_t& variable_metabolites_lower_bound
+    , const double variable_metabolites_lower_bound
     )
     : ConstraintSet(n_variable_metabolites, name)
     , n_variable_metabolites_(n_variable_metabolites)

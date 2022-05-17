@@ -135,35 +135,102 @@ maximum_entropy_solver
     //
     // add cost function_class
     //
-    std::string cost_class_name = "metab_cost"; // ifopt stuff really likes it when you name it
+    std::string cost_class_name = "metab_cost";
     nlp.AddCostSet(std::make_shared<Cost>   ( cost_class_name
                                             , variable_metabolites_variables_name
                                             , objective_reaction_indices
                                             ));
     
     //
-    // add constraint class
+    // add constraint classes
     //
-    std::string constraint_class_name = "metab_constraints"; // ifopt stuff really likes it when you name it
-    nlp.AddConstraintSet(std::make_shared<Constraints>  ( constraint_class_name
-                                                        , num_total_metabolies
-                                                        , num_variable_metabolites
+
+    // maximum entropy problem formulation 94
+    std::string null_space_constraint_class_name = "null_space_constraints";
+    nlp.AddConstraintSet(std::make_shared<Constraints>  ( null_space_constraint_class_name
                                                         , n_reactions
-                                                        , fixed_metabolites
-                                                        , variable_metabolites_variables_name
                                                         , flux_variables_name
-                                                        , steady_state_variables_name
-                                                        , h_variables_name
-                                                        , u_variable_name
                                                         , beta_variables_name
                                                         , null_space_stoich_matrix_variable_metab_section
                                                         , dim_null_space
-                                                        , stoichiometric_matrix_T
+                                                        ));
+
+    // maximum entropy problem formulation 95
+    std::string steady_state_constraint_class_name = "steady_state_constraints";
+    nlp.AddConstraintSet(std::make_shared<Constraints>  ( steady_state_constraint_class_name
+                                                        , n_reactions
+                                                        , num_total_metabolies
+                                                        , num_variable_metabolites
+                                                        , fixed_metabolites
+                                                        , variable_metabolites_variables_name
+                                                        , steady_state_variables_name
+                                                        , stoich_matrix_variable_metab_section_T
+                                                        , stoich_matrix_fixed_metab_section_T
+                                                        ));
+
+    // maximum entropy problem formulation 96
+    std::string smooth_constraint_class_name = "smooth_constraints";
+    nlp.AddConstraintSet(std::make_shared<Constraints>  ( smooth_constraint_class_name
+                                                        , n_reactions
+                                                        , flux_variables_name
+                                                        , h_variables_name
+                                                        ));
+
+    // maximum entropy problem formulation 97
+    std::string relaxed_flux_upper_constraint_class_name = "relaxed_flux_upper_constraints";
+    nlp.AddConstraintSet(std::make_shared<Constraints>  ( relaxed_flux_upper_constraint_class_name
+                                                        , n_reactions
+                                                        , steady_state_variables_name
+                                                        , h_variables_name
+                                                        , u_variable_name
                                                         , big_M_value
                                                         , equilibrium_constants
+                                                        ));
+
+    // maximum entropy problem formulation 98
+    std::string relaxed_flux_lower_constraint_class_name = "relaxed_flux_lower_constraints";
+    nlp.AddConstraintSet(std::make_shared<Constraints>  ( relaxed_flux_upper_constraint_class_name
+                                                        , n_reactions
+                                                        , steady_state_variables_name
+                                                        , h_variables_name
+                                                        , u_variable_name
+                                                        , big_M_value
+                                                        , equilibrium_constants
+                                                        ));
+
+    // maximum entropy problem formulation 99
+    std::string sign_constraint_class_name = "sign_constraints";
+    nlp.AddConstraintSet(std::make_shared<Constraints>  ( sign_constraint_class_name
+                                                        , n_reactions
+                                                        , steady_state_variables_name
+                                                        , flux_variables_name
+                                                        , equilibrium_constants
+                                                        ));
+
+    // maximum entropy problem formulation 100
+    std::string relaxed_flux_sign_constraint_class_name = "relaxed_flux_sign_constraints";
+    nlp.AddConstraintSet(std::make_shared<Constraints>  ( relaxed_flux_sign_constraint_class_name
+                                                        , n_reactions
+                                                        , flux_variables_name
+                                                        , u_variable_name
+                                                        ));
+
+    // maximum entropy problem formulation 101 upper
+    std::string metabolites_upper_bound_constraint_class_name = "metabolites_upper_bound_constraints";
+    nlp.AddConstraintSet(std::make_shared<Constraints>  ( metabolites_upper_bound_constraint_class_name
+                                                        , num_variable_metabolites
+                                                        , variable_metabolites_variables_name
                                                         , target_log_variable_metabolites_counts
+                                                        ));
+
+    // maximum entropy problem formulation 101 lower
+    std::string metabolites_lower_bound_constraint_class_name = "metabolites_lower_bound_constraints";
+    nlp.AddConstraintSet(std::make_shared<Constraints>  ( metabolites_lower_bound_constraint_class_name
+                                                        , num_variable_metabolites
+                                                        , variable_metabolites_variables_name
                                                         , variable_metabolite_lower_bound
                                                         ));
+    
     //
     // run the solver
     //
