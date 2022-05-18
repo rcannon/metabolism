@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# comment line below for production
+set(CMAKE_BUILD_TYPE Debug)
+
 project(metabolism)
 
 find_package(Eigen3 REQUIRED)

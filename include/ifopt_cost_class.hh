@@ -18,7 +18,7 @@ public:
                           , Jacobian& jac
                           ) const override;
 private:
-    const std::string variable_metabolites_name_;
+    const std::string flux_variables_name_;
     index_list_t objective_reaction_indices_;
 };
 

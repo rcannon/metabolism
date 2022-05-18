@@ -137,7 +137,7 @@ maximum_entropy_solver
     //
     std::string cost_class_name = "metab_cost";
     nlp.AddCostSet(std::make_shared<Cost>   ( cost_class_name
-                                            , variable_metabolites_variables_name
+                                            , flux_variables_name
                                             , objective_reaction_indices
                                             ));
     
@@ -252,10 +252,10 @@ maximum_entropy_solver
     ipopt.SetOption("linear_solver", "mumps"); // change if desired
     ipopt.SetOption("jacobian_approximation", "exact"); // keep this because we specified jacobians
 
+    std::cout << "\nhere max ent\n";
+
     // solve the problem
     ipopt.Solve(nlp);
-
-    std::cout << "\nhere max ent\n";
 
     // get the found variable solutions
     // reilly: make sure these are in the same order as added to problem (nlp.AddVariableSet).

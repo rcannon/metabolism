@@ -11,7 +11,7 @@ Concentration2Count = N_avogadro * VolCell
 concentration_increment = 1/(N_avogadro*VolCell)
 
 def read_input(conc_file, K_file, S_file):
-  with open('concentrations.csv', 'r', encoding='UTF8') as f:
+  with open('../data/concentrations.csv', 'r', encoding='UTF8') as f:
       lines = f.read().splitlines()
       x = lines[0].split()
       nvar = int(x[1])
@@ -19,7 +19,7 @@ def read_input(conc_file, K_file, S_file):
       v_log_counts = x[:nvar]
       f_log_counts = x[nvar:]
     
-  with open('EquilibriumConstants.csv', 'r', encoding='UTF8') as f:
+  with open('../data/EquilibriumConstants.csv', 'r', encoding='UTF8') as f:
       lines = f.read().splitlines()
       x = lines[0].split()
       iuptake = int(x[1])
@@ -31,15 +31,15 @@ def read_input(conc_file, K_file, S_file):
 
       K = np.asarray(lines[3].split(","),dtype=np.float64)
     
-  with open('StoichiometricMatrix.csv', 'r', encoding='UTF8') as f:
+  with open('../data/StoichiometricMatrix.csv', 'r', encoding='UTF8') as f:
       S = np.loadtxt(f, delimiter=",")
 
   return(v_log_counts, f_log_counts, obj_rxn_idx, K, S)
 
 def metabolism_driver():
-  conc_file = 'concentrations.csv'
-  K_file = 'EquilibriumConstants.csv'
-  S_file = 'StoichiometricMatrix.csv'
+  conc_file = '../data/concentrations.csv'
+  K_file = '../data/EquilibriumConstants.csv'
+  S_file = '../data/StoichiometricMatrix.csv'
 
   Vmax = 1000 #int
   s = 0.085 #float

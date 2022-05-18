@@ -38,6 +38,61 @@ main()
         * concentration_to_count
         ).array().log().matrix();
 
+    int Vmax = 1000;
+    double s = 0.085;
+    double Km = 0.5*s;
+    int iuptake = 32;
+    int ioutput = 32;
+    auto run_results = run 
+        ( variable_metabolites
+        , fixed_metabolites
+        , target_log_variable_metabolites_count
+        , stoichiometric_matrix
+        , equilibrium_constants
+        , i_uptake
+        , Vmax
+        , Km
+        , s
+        , objective_reaction_indices
+        );
+    vector_t reaction_flux = std::get<0>(run_results);
+    variable_metabolites = std::get<1>(run_results);
+
+    int nutrient_ratio = 1;
+    double s_new;
+    double scaled_flux2;
+    for (int step = 0; step < 5, step++){
+
+        s_new = s + 0.04 * s;
+        nutrient_ratio = nutrient_ratio * (s_new/s);
+
+        if ((nutrient_ratio > 1.05) || (nutrient_ratio < 0.95)){
+            auto run_results = run 
+                ( variable_metabolites
+                , fixed_metabolites
+                , target_log_variable_metabolites_count
+                , stoichiometric_matrix
+                , equilibrium_constants
+                , i_uptake
+                , Vmax
+                , Km
+                , s
+                , objective_reaction_indices
+                );
+            vector_t reaction_flux = std::get<0>(run_results);
+            variable_metabolites = std::get<1>(run_results);
+
+            nutrient_ratio = 1;
+        }
+        scaled_flux2 = scale_flux(reaction_flux, iuptake, Vmax, Km, s);
+
+        std::cout << "scale_flux2: " << scaled_flux2(iuptake) << "\n";
+    }
+    return 0;
+}
+
+/*
+
     // set the initial flux_variables
     vector_t flux_variables = vector_t::Constant(num_reactions, 1.0);
 
@@ -66,3 +121,4 @@ main()
 
     return 0;
 }
+*/
