@@ -30,4 +30,6 @@ target_sources(metabolism PRIVATE
         ${PROJECT_SOURCE_DIR}/src/ifopt_variable_class.cc
         ${PROJECT_SOURCE_DIR}/src/maximum_entropy_relaxed.cc
         ${PROJECT_SOURCE_DIR}/src/read_data_files.cc
+        ${PROJECT_SOURCE_DIR}/src/metabolism.cc
+        ${PROJECT_SOURCE_DIR}/src/find_initial_values.cc
 )

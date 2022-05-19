@@ -25,8 +25,8 @@ vector_t
 reaction_flux
     ( const vector_t& variable_metabolites_log_counts
     , const vector_t& fixed_metabolites_log_counts
-    , const matrix_t& stochiometric_matrix
-    , const vector_t& equilibrium_constants
-    , const vector_t& E_regulation
+    , const matrix_t& stoich_matrix
+    , const matrix_t& equilibrium_constants
+    , const matrix_t& E_regulation
     );
 

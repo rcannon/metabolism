@@ -2,6 +2,7 @@
 #include "includes_and_types.hh"
 #include "maximum_entropy_relaxed.hh"
 #include "read_data_files.hh"
+#include "metabolism.hh"
 
 int
 main()
@@ -43,16 +44,12 @@ main()
     double Km = 0.5*s;
     int iuptake = 32;
     int ioutput = 32;
-    auto run_results = run 
+    auto run_results = run_metabolism
         ( variable_metabolites
         , fixed_metabolites
         , target_log_variable_metabolites_count
         , stoichiometric_matrix
         , equilibrium_constants
-        , i_uptake
-        , Vmax
-        , Km
-        , s
         , objective_reaction_indices
         );
     vector_t reaction_flux = std::get<0>(run_results);
@@ -60,23 +57,19 @@ main()
 
     int nutrient_ratio = 1;
     double s_new;
-    double scaled_flux2;
-    for (int step = 0; step < 5, step++){
+    vector_t scaled_flux2;
+    for (int step = 0; step < 5; step++){
 
         s_new = s + 0.04 * s;
         nutrient_ratio = nutrient_ratio * (s_new/s);
 
         if ((nutrient_ratio > 1.05) || (nutrient_ratio < 0.95)){
-            auto run_results = run 
+            auto run_results = run_metabolism
                 ( variable_metabolites
                 , fixed_metabolites
                 , target_log_variable_metabolites_count
                 , stoichiometric_matrix
                 , equilibrium_constants
-                , i_uptake
-                , Vmax
-                , Km
-                , s
                 , objective_reaction_indices
                 );
             vector_t reaction_flux = std::get<0>(run_results);

@@ -1,6 +1,7 @@
 
 #include "includes_and_types.hh"
 #include "maximum_entropy_relaxed.hh"
+#include "find_initial_values.hh"
 
 #pragma once
 
@@ -45,18 +46,24 @@ calc_odds
     , const matrix_t& positive_stoich_matrix
     , const vector_t& delta
     , const vector_t& equilibrium_constants
-    , const double direction = 1.0
+    , const double direction
+    );
+
+vector_t
+scale_flux
+    ( const vector_t& reaction_flux
+    , const int iglucose
+    , const double Vmax
+    , const double Km
+    , const double s
     );
 
 std::tuple<vector_t, vector_t>
-run ( const vector_t& variable_metabolites
+run_metabolism
+    ( const vector_t& variable_metabolites
     , const vector_t& fixed_metabolites
     , const vector_t& target_log_variable_metabolites_count
     , const matrix_t& stoichiometric_matrix
     , const vector_t& equilibrium_constants
-    , const int i_uptake
-    , const int Vmax
-    , const double Km
-    , const double s
     , const index_list_t& objective_reaction_indices
     );

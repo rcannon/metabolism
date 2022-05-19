@@ -27,7 +27,7 @@ maximum_entropy_solver
     value_t variable_metabolite_lower_bound = -300;
     value_t big_M_value = 1000;
 
-    matrix_t stoichiometric_matrix = stoich_matrix; // copying because bad practive but easy
+    matrix_t stoichiometric_matrix = stoich_matrix; // copying because bad practive but easy, also see line 314
     
     // Stoichiometric Matrix - rows are reactions, cols are metabolites
     matrix_t stoichiometric_matrix_T = stoichiometric_matrix; // this should do deep copy 
@@ -303,28 +303,24 @@ maximum_entropy_solver
 
 vector_t
 reaction_flux
-    ( vector_t variable_metabolites_log_counts
-    , vector_t fixed_metabolites_log_counts
-    , matrix_t stochiometric_matrix
-    , matrix_t equilibrium_constants
-    , matrix_t E_regulation
+    ( const vector_t& variable_metabolites_log_counts
+    , const vector_t& fixed_metabolites_log_counts
+    , const matrix_t& stoich_matrix
+    , const matrix_t& equilibrium_constants
+    , const matrix_t& E_regulation
     )
 {
-    matrix_t stochiometric_matrix_T = stochiometric_matrix;
-    stochiometric_matrix.transposeInPlace();
+
+    matrix_t stoichiometric_matrix = stoich_matrix;
+    matrix_t stoichiometric_matrix_T = stoichiometric_matrix;
+    stoichiometric_matrix.transposeInPlace();
 
     //size_t n_reactions = stochiometric_matrix.cols();
-
-    variable_metabolites_log_counts = variable_metabolites_log_counts.reshaped<Eigen::RowMajor>().eval();
-    fixed_metabolites_log_counts = fixed_metabolites_log_counts.reshaped<Eigen::RowMajor>().eval();
 
     vector_t total_log_counts(variable_metabolites_log_counts.size() + fixed_metabolites_log_counts.size());
     total_log_counts << variable_metabolites_log_counts, fixed_metabolites_log_counts;
 
-    equilibrium_constants = equilibrium_constants.reshaped<Eigen::RowMajor>().eval();
-    E_regulation = E_regulation.reshaped<Eigen::RowMajor>().eval();
-
-    auto coeff = (-0.25 * stochiometric_matrix_T * total_log_counts).array().exp().pow(4);
+    auto coeff = (-0.25 * stoichiometric_matrix_T * total_log_counts).array().exp().pow(4);
     auto forward_odds = equilibrium_constants.array() * coeff;
     auto reverse_odds = equilibrium_constants.array().inverse() * coeff;
 
