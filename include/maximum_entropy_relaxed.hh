@@ -9,24 +9,24 @@
 
 #pragma once
 
-std::tuple<vector_t, vector_t, vector_t, vector_t, vector_t>
+std::tuple<vector_t, vector_t, vector_t, vector_t, vector_t, vector_t>
 maximum_entropy_solver
-    ( vector_t variable_metabolites_init // aka n
-    , vector_t fixed_metabolites
-    , vector_t flux_variables_init // aka y
-    , vector_t beta_init // \beta
-    , vector_t target_log_variable_metabolites_counts
-    , matrix_t stoichiometric_matrix
-    , vector_t equilibrium_constants // aka K
-    , index_list_t objective_reaction_indices
+    ( const vector_t& variable_metabolites_init // aka n
+    , const vector_t& fixed_metabolites
+    , const vector_t& flux_variables_init // aka y
+    , const vector_t& beta_init // \beta
+    , const vector_t& target_log_variable_metabolites_counts
+    , const matrix_t& stoich_matrix
+    , const vector_t& equilibrium_constants // aka K
+    , const index_list_t& objective_reaction_indices
     );
 
 vector_t
 reaction_flux
-    ( vector_t variable_metabolites_log_counts
-    , vector_t fixed_metabolites_log_counts
-    , matrix_t stochiometric_matrix
-    , matrix_t equilibrium_constants
-    , matrix_t E_regulation
+    ( const vector_t& variable_metabolites_log_counts
+    , const vector_t& fixed_metabolites_log_counts
+    , const matrix_t& stochiometric_matrix
+    , const vector_t& equilibrium_constants
+    , const vector_t& E_regulation
     );
 

@@ -4,16 +4,16 @@
 using namespace ifopt;
 
 
-std::tuple<vector_t, vector_t, vector_t, vector_t, vector_t>
+std::tuple<vector_t, vector_t, vector_t, vector_t, vector_t, vector_t>
 maximum_entropy_solver
-    ( vector_t variable_metabolites_init // aka n
-    , vector_t fixed_metabolites
-    , vector_t flux_variables_init // aka y
-    , vector_t beta_init // \beta
-    , vector_t target_log_variable_metabolites_counts
-    , matrix_t stoichiometric_matrix
-    , vector_t equilibrium_constants // aka K
-    , index_list_t objective_reaction_indices
+    ( const vector_t& variable_metabolites_init // aka n
+    , const vector_t& fixed_metabolites
+    , const vector_t& flux_variables_init // aka y
+    , const vector_t& beta_init // \beta
+    , const vector_t& target_log_variable_metabolites_counts
+    , const matrix_t& stoich_matrix
+    , const vector_t& equilibrium_constants // aka K
+    , const index_list_t& objective_reaction_indices
     )
 {
     //
@@ -27,6 +27,8 @@ maximum_entropy_solver
     value_t variable_metabolite_lower_bound = -300;
     value_t big_M_value = 1000;
 
+    matrix_t stoichiometric_matrix = stoich_matrix; // copying because bad practive but easy
+    
     // Stoichiometric Matrix - rows are reactions, cols are metabolites
     matrix_t stoichiometric_matrix_T = stoichiometric_matrix; // this should do deep copy 
     stoichiometric_matrix.transposeInPlace(); // now rows are metabolites, cols are reactions
@@ -294,7 +296,7 @@ maximum_entropy_solver
     vector_t alpha_sol = 
         ( flux_sol.array() / unreq_rxn_flux.array() ).matrix();
 
-    return { steady_state_sol, flux_sol, alpha_sol, beta_sol, metabolites_sol}; 
+    return { steady_state_sol, flux_sol, alpha_sol, h_sol, beta_sol, metabolites_sol}; 
 
 }
   
