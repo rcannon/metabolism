@@ -1,7 +1,6 @@
 
-Goals:
-    Now: get compiling and output from c++ code
-    Next: get outputs matching python code
+TODO:
+    get feasible point output from python, plug into c++
 
 
 
@@ -17,6 +16,13 @@ Questions for Ethan
 ****************************************************************************
 USAGE NOTES
 ****************************************************************************
+
+ifopt does not do variable indices like pyomo. This came up when 
+    separating the variable metabolites from the fixed metabolites and also
+    when fitting the target_counts to be the same size as the variable metabolites.
+    The python code seemed to just select the variable metabolites from the
+    front of the array, so this is what I did.
+
 eigen objects and any object that contains an eigin object MUST be 
     passed by reference and never by value. or else memory become unaligned. 
     Returning by value is fine though.

@@ -247,17 +247,16 @@ maximum_entropy_solver
     //
 
     // print out initial state
-    nlp.PrintCurrent();
+    //nlp.PrintCurrent();
 
     // initialize solver
     ifopt::IpoptSolver ipopt;
     ipopt.SetOption("linear_solver", "mumps"); // change if desired
     ipopt.SetOption("jacobian_approximation", "exact"); // keep this because we specified jacobians
 
-    std::cout << "\nhere max ent\n";
-
     // solve the problem
     ipopt.Solve(nlp);
+    nlp.PrintCurrent();
 
     // get the found variable solutions
     // reilly: make sure these are in the same order as added to problem (nlp.AddVariableSet).

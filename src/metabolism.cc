@@ -121,7 +121,7 @@ odds_diff
         , equilibrium_constants
         , direction
         );
-    vector_t equilibrium_constants_inverse = equilibrium_constants_inverse.array().inverse().matrix();
+    vector_t equilibrium_constants_inverse = equilibrium_constants.array().inverse().matrix();
     direction = -1.0;
     vector_t KQ_r = calc_odds
         ( all_metabolites
@@ -192,7 +192,7 @@ run_metabolism
         );
     vector_t beta_init = std::get<0>(initial_results);
     vector_t flux_values_init = std::get<1>(initial_results);
-    vector_t variable_metabolites_init = std::get<1>(initial_results);
+    vector_t variable_metabolites_init = std::get<2>(initial_results);
 
     // get solution
     auto optimize_results = optimize

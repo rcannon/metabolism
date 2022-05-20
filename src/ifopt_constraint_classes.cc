@@ -606,7 +606,9 @@ MetabolitesUpperBoundConstraint::MetabolitesUpperBoundConstraint
     , n_variable_metabolites_(n_variable_metabolites)
     , variable_metabolites_name_(variable_metabolites_name)
     , variable_metabolites_upper_bound_(variable_metabolites_upper_bound)
-{}
+{
+    assert(variable_metabolites_upper_bound_.size() == n_variable_metabolites_);
+}
 
 vector_t
 MetabolitesUpperBoundConstraint::GetValues()
