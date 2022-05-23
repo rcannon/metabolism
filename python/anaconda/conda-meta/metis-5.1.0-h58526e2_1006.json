@@ -1,0 +1,100 @@
+{
+  "build": "h58526e2_1006",
+  "build_number": 1006,
+  "channel": "https://conda.anaconda.org/conda-forge/linux-64",
+  "constrains": [],
+  "depends": [
+    "libgcc-ng >=7.5.0"
+  ],
+  "extracted_package_dir": "/people/cann484/.conda/pkgs/metis-5.1.0-h58526e2_1006",
+  "features": "",
+  "files": [
+    "bin/cmpfillin",
+    "bin/gpmetis",
+    "bin/graphchk",
+    "bin/m2gmetis",
+    "bin/mpmetis",
+    "bin/ndmetis",
+    "include/metis.h",
+    "lib/libmetis.so"
+  ],
+  "fn": "metis-5.1.0-h58526e2_1006.tar.bz2",
+  "license": "Apache-2.0",
+  "license_family": "APACHE",
+  "link": {
+    "source": "/people/cann484/.conda/pkgs/metis-5.1.0-h58526e2_1006",
+    "type": 1
+  },
+  "md5": "d099b812378b1e133c12e3b75167d83a",
+  "name": "metis",
+  "package_tarball_full_path": "/people/cann484/.conda/pkgs/metis-5.1.0-h58526e2_1006.tar.bz2",
+  "paths_data": {
+    "paths": [
+      {
+        "_path": "bin/cmpfillin",
+        "path_type": "hardlink",
+        "sha256": "d6b1684d8569bb19aa085cea2c26dda33b6b5aee39bd16a2c58b51998a2fb42d",
+        "sha256_in_prefix": "d6b1684d8569bb19aa085cea2c26dda33b6b5aee39bd16a2c58b51998a2fb42d",
+        "size_in_bytes": 39112
+      },
+      {
+        "_path": "bin/gpmetis",
+        "path_type": "hardlink",
+        "sha256": "3b3e31117c1f56458fd619db9a2f63f92ad46c6ec1b51abf211406f5aced987c",
+        "sha256_in_prefix": "3b3e31117c1f56458fd619db9a2f63f92ad46c6ec1b51abf211406f5aced987c",
+        "size_in_bytes": 56112
+      },
+      {
+        "_path": "bin/graphchk",
+        "path_type": "hardlink",
+        "sha256": "b18d35e03251b25fdc8e5d4a70b8e00416cb049622311bd57a95299e688a9668",
+        "sha256_in_prefix": "b18d35e03251b25fdc8e5d4a70b8e00416cb049622311bd57a95299e688a9668",
+        "size_in_bytes": 30944
+      },
+      {
+        "_path": "bin/m2gmetis",
+        "path_type": "hardlink",
+        "sha256": "738b20be39c27bad89d8e0f6297a53542e9e7c96c512f64ef947acb4cd4784a2",
+        "sha256_in_prefix": "738b20be39c27bad89d8e0f6297a53542e9e7c96c512f64ef947acb4cd4784a2",
+        "size_in_bytes": 38880
+      },
+      {
+        "_path": "bin/mpmetis",
+        "path_type": "hardlink",
+        "sha256": "87a7d81e0dbf5a391b3fb2de30fa23c23b8eadd89f47cd1730fb7a80e4e948e6",
+        "sha256_in_prefix": "87a7d81e0dbf5a391b3fb2de30fa23c23b8eadd89f47cd1730fb7a80e4e948e6",
+        "size_in_bytes": 55816
+      },
+      {
+        "_path": "bin/ndmetis",
+        "path_type": "hardlink",
+        "sha256": "89f66046a00cf66bda5b11bacb57a2aae7364a7440464bd0669d826e5f7c0750",
+        "sha256_in_prefix": "89f66046a00cf66bda5b11bacb57a2aae7364a7440464bd0669d826e5f7c0750",
+        "size_in_bytes": 49104
+      },
+      {
+        "_path": "include/metis.h",
+        "path_type": "hardlink",
+        "sha256": "20826dae4a5ff3fce9ad5fd0cf28ed0f8899e1cbdab1e318dfb33c8123840616",
+        "sha256_in_prefix": "20826dae4a5ff3fce9ad5fd0cf28ed0f8899e1cbdab1e318dfb33c8123840616",
+        "size_in_bytes": 10177
+      },
+      {
+        "_path": "lib/libmetis.so",
+        "path_type": "hardlink",
+        "sha256": "6f21206fe42e56e6b2c24b37d3becffd0342ab7e84723a1616e21fbc212b839d",
+        "sha256_in_prefix": "6f21206fe42e56e6b2c24b37d3becffd0342ab7e84723a1616e21fbc212b839d",
+        "size_in_bytes": 516376
+      }
+    ],
+    "paths_version": 1
+  },
+  "requested_spec": "None",
+  "sha256": "51874bbe38bceafc89158e276f202aecdf9171e0f3c946948ea2457611c4831a",
+  "size": 4284576,
+  "subdir": "linux-64",
+  "timestamp": 1605778005343,
+  "track_features": "",
+  "url": "https://conda.anaconda.org/conda-forge/linux-64/metis-5.1.0-h58526e2_1006.tar.bz2",
+  "version": "5.1.0"
+}

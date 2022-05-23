@@ -38,21 +38,30 @@ maximum_entropy_solver
     // and the component corresponding to the fixed metabolites. 
         // Reilly: below should do the same thing as numpy.delete
         // https://eigen.tuxfamily.org/dox-devel/group__TutorialSlicingIndexing.html
-    index_list_t variable_metabolite_indices(num_variable_metabolites); /* variable metabolite indices */
-    std::iota(variable_metabolite_indices.begin(), variable_metabolite_indices.end(), 0);
-    index_list_t fixed_metabolite_indices(num_fixed_metabolites); /* fixed metabolite indices */
-    std::iota(fixed_metabolite_indices.begin(), fixed_metabolite_indices.end(), num_fixed_metabolites);
-    matrix_t stoich_matrix_variable_metab_section_T = stoichiometric_matrix_T(Eigen::all, variable_metabolite_indices);
-    matrix_t stoich_matrix_fixed_metab_section_T = stoichiometric_matrix_T(Eigen::all, fixed_metabolite_indices);
+
+    matrix_t stoich_matrix_variable_metab_section_T 
+        = stoichiometric_matrix_T(Eigen::all, Eigen::seq(0, num_variable_metabolites-1));
+    matrix_t stoich_matrix_fixed_metab_section_T 
+        = stoichiometric_matrix_T(Eigen::all, Eigen::seq(num_variable_metabolites, stoichiometric_matrix_T.cols()-1));
 
     matrix_t stoich_matrix_variable_metab_section = stoich_matrix_variable_metab_section_T.transpose();
     matrix_t stoich_matrix_fixed_metab_section = stoich_matrix_fixed_metab_section_T.transpose();
-
     // find a basis for the nullspace of S_v,
     // and get the dimension of the null space 
-    Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp(stoich_matrix_variable_metab_section);
-    matrix_t null_space_stoich_matrix_variable_metab_section = lu_decomp.kernel();
-    size_t dim_null_space = lu_decomp.dimensionOfKernel();
+    //Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp(stoich_matrix_variable_metab_section);
+    //matrix_t null_space_stoich_matrix_variable_metab_section = lu_decomp.kernel();
+    //size_t dim_null_space = lu_decomp.dimensionOfKernel();
+    CompleteOrthogonalDecomposition<matrix_t> cod;
+    cod.compute(stoich_matrix_variable_metab_section);
+    int rk = cod.rank();
+    matrix_t P = cod.colsPermutation();
+    matrix_t V = cod.matrixZ().transpose();
+    matrix_t null_space_stoich_matrix_variable_metab_section 
+        = P * V.block(0, rk, V.rows(), V.cols() - rk);
+
+    std::cout << "\nkernel dim " << cod.dimensionOfKernel << "\n";
+    std::cout << "\nkernel rank " << rk << "\n";
+    size_t dim_null_space = cod.dimensionOfKernel;
 
 
     // precompute SVS

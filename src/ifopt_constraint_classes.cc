@@ -57,7 +57,6 @@ NullSpaceRepresentationConstraint::FillJacobianBlock
     )
 const
 {
-    // std::cout << "\n null space \n";
     int row_end = n_reactions_;
 
     if (var_set == flux_variables_name_) {
@@ -74,7 +73,6 @@ const
             }
         }
     }
-    // std::cout << "\n null space \n";
 }
 
 //
@@ -146,7 +144,6 @@ SteadyStateConstraint::FillJacobianBlock
     )
 const
 {
-    // std::cout << "\n steady state \n";
     int row_end = n_reactions_;
 
     if (var_set == variable_metabolites_name_) {
@@ -163,7 +160,6 @@ const
             jac_block.coeffRef( diag, diag ) = -1.0;
         }
     }
-    // std::cout << "\n steady state \n";
 }
 
 //
@@ -226,7 +222,6 @@ SmoothConstraint::FillJacobianBlock
     )
 const
 {
-    // std::cout << "\n smooth  \n";
     int row_end = n_reactions_;
 
     if (var_set == flux_variables_name_) {
@@ -242,7 +237,6 @@ const
             jac_block.coeffRef(diag, diag) = -1.0;
         }
     }
-    // std::cout << "\n smooth  \n";
 }
 
 vector_t
@@ -316,7 +310,6 @@ RelaxedFluxUpperConstraint::FillJacobianBlock
     )
 const
 {
-    //std::cout << "\n relax flux upper  \n";
     int row_end = n_reactions_;
 
     if (var_set == steady_state_variables_name_) {
@@ -336,7 +329,6 @@ const
             jac_block.coeffRef( diag, diag ) = -big_M_value_;
         }
     }
-    // std::cout << "\n relax flux upper  \n";
 }
 
 //
@@ -401,7 +393,6 @@ RelaxedFluxLowerConstraint::FillJacobianBlock
     )
 const
 {
-    //std::cout << "\n relax flux lower  \n";
     int row_end = n_reactions_;
 
     if (var_set == steady_state_variables_name_) {
@@ -421,7 +412,6 @@ const
             jac_block.coeffRef( diag, diag ) = -big_M_value_;
         }
     }
-    //std::cout << "\n relax flux lower \n";
 }
 
 //
@@ -478,7 +468,6 @@ SignConstraint::FillJacobianBlock
     )
 const
 {
-    //std::cout << "\n sign  \n";
     int row_end = n_reactions_;
 
     if (var_set == flux_variables_name_) {
@@ -496,7 +485,6 @@ const
             jac_block.coeffRef( diag, diag ) = gradient(diag);
         }
     }
-    //std::cout << "\n sign \n";
 }
 
 vector_t
@@ -571,7 +559,7 @@ RelaxedFluxSignConstraint::FillJacobianBlock
     )
 const
 {
-    //std::cout << "\n flux sign  \n";
+    
     int row_end = n_reactions_;
 
     if (var_set == flux_variables_name_){
@@ -585,7 +573,7 @@ const
             jac_block.coeffRef( diag, diag) = 2.0;
         }
     }
-    //std::cout << "\n flux sign  \n";
+    
 }
 
 //
@@ -641,7 +629,6 @@ MetabolitesUpperBoundConstraint::FillJacobianBlock
     )
 const
 {
-    //std::cout << "\n met upper  \n";
     int row_end = n_variable_metabolites_;
 
     if (var_set == variable_metabolites_name_){
@@ -650,7 +637,6 @@ const
             jac_block.coeffRef( diag, diag ) = -1.0;
         }
     }
-    //std::cout << "\n met upper  \n";
 }
 
 //
@@ -704,7 +690,6 @@ MetabolitesLowerBoundConstraint::FillJacobianBlock
     )
 const
 {
-    //std::cout << "\n met lower  \n";
     int row_end = n_variable_metabolites_;
 
     if (var_set == variable_metabolites_name_){
@@ -713,7 +698,6 @@ const
             jac_block.coeffRef( diag, diag ) = -1.0;
         }
     }
-    //std::cout << "\n met lower  \n";
 }
 
 //

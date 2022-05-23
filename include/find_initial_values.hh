@@ -11,3 +11,6 @@ find_initial_values
     , const matrix_t& stoichiometric_matrix
     , const vector_t& equilibrium_constants
     );
+
+vector_t
+read_to_vector(const std::string path);

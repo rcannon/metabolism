@@ -1,6 +1,7 @@
 #!/Users/d3k137/.pyenv/shims/python
 # -*- coding: utf-8 -*-
 
+from os.path import exists
 import numpy as np
 import metabolism
 from importlib import reload
@@ -9,12 +10,14 @@ VolCell = 1.0e-15
 
 Concentration2Count = N_avogadro * VolCell
 concentration_increment = 1/(N_avogadro*VolCell)
+#print("exists")
+#print(exists('../data/concentrations.csv'))
 
 def read_input(conc_file, K_file, S_file):
   with open('../data/concentrations.csv', 'r', encoding='UTF8') as f:
       lines = f.read().splitlines()
       x = lines[0].split()
-      nvar = int(x[1])
+      nvar = int(x[0])
       x = np.asarray(lines[2].split(","),dtype=np.float64)
       v_log_counts = x[:nvar]
       f_log_counts = x[nvar:]
@@ -22,12 +25,13 @@ def read_input(conc_file, K_file, S_file):
   with open('../data/EquilibriumConstants.csv', 'r', encoding='UTF8') as f:
       lines = f.read().splitlines()
       x = lines[0].split()
-      iuptake = int(x[1])
+      iuptake = int(x[0])
       x = lines[1].split()
-      ioutput = int(x[1])
-      x = lines[2].split(" ",1)
-      y = (x[1].replace('[','').replace(']','').split(", "))
-      obj_rxn_idx = [int(i) for i in y]
+      ioutput = int(x[0])
+      #x = lines[2].split(" ",1)
+      #y = (x[1].replace('[','').replace(']','').split(", "))
+      obj_rxn_idx = [int(i) for i in lines[2].split(',')]
+      #print(obj_rxn_idx)
 
       K = np.asarray(lines[3].split(","),dtype=np.float64)
     

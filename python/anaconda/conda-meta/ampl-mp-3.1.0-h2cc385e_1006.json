@@ -1,0 +1,439 @@
+{
+  "build": "h2cc385e_1006",
+  "build_number": 1006,
+  "channel": "https://conda.anaconda.org/conda-forge/linux-64",
+  "constrains": [],
+  "depends": [
+    "libgcc-ng >=9.4.0",
+    "libgfortran-ng",
+    "libgfortran5 >=9.4.0",
+    "libstdcxx-ng >=9.4.0",
+    "unixodbc >=2.3.9,<2.4.0a0"
+  ],
+  "extracted_package_dir": "/people/cann484/.conda/pkgs/ampl-mp-3.1.0-h2cc385e_1006",
+  "features": "",
+  "files": [
+    "bin/ampltabl.dll",
+    "bin/cp.dll",
+    "bin/tableproxy64",
+    "include/asl/arith.h",
+    "include/asl/asl.h",
+    "include/asl/asl_pfg.h",
+    "include/asl/asl_pfgh.h",
+    "include/asl/aslbuilder.h",
+    "include/asl/aslexpr-visitor.h",
+    "include/asl/aslexpr.h",
+    "include/asl/aslinterface.h",
+    "include/asl/aslproblem.h",
+    "include/asl/avltree.h",
+    "include/asl/funcadd.h",
+    "include/asl/getstub.h",
+    "include/asl/jacpdim.h",
+    "include/asl/nlp.h",
+    "include/asl/nlp2.h",
+    "include/asl/opcode.hd",
+    "include/asl/psinfo.h",
+    "include/asl/r_opn.hd",
+    "include/asl/stdio1.h",
+    "include/mp/arrayref.h",
+    "include/mp/basic-expr-visitor.h",
+    "include/mp/clock.h",
+    "include/mp/common.h",
+    "include/mp/error.h",
+    "include/mp/expr-visitor.h",
+    "include/mp/expr.h",
+    "include/mp/format.h",
+    "include/mp/nl-reader.h",
+    "include/mp/nl.h",
+    "include/mp/option.h",
+    "include/mp/os.h",
+    "include/mp/posix.h",
+    "include/mp/problem-builder.h",
+    "include/mp/problem.h",
+    "include/mp/rstparser.h",
+    "include/mp/safeint.h",
+    "include/mp/sol.h",
+    "include/mp/solver.h",
+    "include/mp/suffix.h",
+    "lib/libasl.a",
+    "lib/libasl.so",
+    "lib/libasl.so.3",
+    "lib/libasl.so.3.1.0",
+    "lib/libmp.so",
+    "lib/libmp.so.3",
+    "lib/libmp.so.3.1.0",
+    "share/mp/LICENSE.rst"
+  ],
+  "fn": "ampl-mp-3.1.0-h2cc385e_1006.tar.bz2",
+  "license": "HPND",
+  "link": {
+    "source": "/people/cann484/.conda/pkgs/ampl-mp-3.1.0-h2cc385e_1006",
+    "type": 1
+  },
+  "md5": "6c2f16f5650a7c66ffdfee57b890ea06",
+  "name": "ampl-mp",
+  "package_tarball_full_path": "/people/cann484/.conda/pkgs/ampl-mp-3.1.0-h2cc385e_1006.tar.bz2",
+  "paths_data": {
+    "paths": [
+      {
+        "_path": "bin/ampltabl.dll",
+        "file_mode": "binary",
+        "path_type": "hardlink",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/ampl-mp_1645057180520/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_pla",
+        "sha256": "4e0a6a0e9b4551be14f1426183655efde736b650101a0a8d53b95b4a23823adc",
+        "sha256_in_prefix": "f167935a0cefee6e1f7acdca065bce3b802b7670a1885f3e0c704f5cbd40e977",
+        "size_in_bytes": 77712
+      },
+      {
+        "_path": "bin/cp.dll",
+        "file_mode": "binary",
+        "path_type": "hardlink",
+        "prefix_placeholder": "/home/conda/feedstock_root/build_artifacts/ampl-mp_1645057180520/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_pla",
+        "sha256": "e604532a922095f8e5fce01b8e981812413e4a2098b21882d65220d4c81571bf",
+        "sha256_in_prefix": "f8152645780c790043cd359d5b6a1aed6fc453c25406d5510cfee2d6d3c3db3e",
+        "size_in_bytes": 49656
+      },
+      {
+        "_path": "bin/tableproxy64",
+        "path_type": "hardlink",
+        "sha256": "94b80023bd873468a189634ef31c05e48c68729ab6ed036573d57649c8de436f",
+        "sha256_in_prefix": "94b80023bd873468a189634ef31c05e48c68729ab6ed036573d57649c8de436f",
+        "size_in_bytes": 158432
+      },
+      {
+        "_path": "include/asl/arith.h",
+        "path_type": "hardlink",
+        "sha256": "b1f8090c7a7cf1e1027ae9d7a4d2cf37d2b29dabca3b31d628d9e301757cd35e",
+        "sha256_in_prefix": "b1f8090c7a7cf1e1027ae9d7a4d2cf37d2b29dabca3b31d628d9e301757cd35e",
+        "size_in_bytes": 177
+      },
+      {
+        "_path": "include/asl/asl.h",
+        "path_type": "hardlink",
+        "sha256": "af052a91be731f3420f28c4cb74a1503dacbaa0b38cb6f434688253eb3402116",
+        "sha256_in_prefix": "af052a91be731f3420f28c4cb74a1503dacbaa0b38cb6f434688253eb3402116",
+        "size_in_bytes": 41335
+      },
+      {
+        "_path": "include/asl/asl_pfg.h",
+        "path_type": "hardlink",
+        "sha256": "22dda1b1fcf7dd07bd05386be775719c79fb151cab5775530371f1b671227bbc",
+        "sha256_in_prefix": "22dda1b1fcf7dd07bd05386be775719c79fb151cab5775530371f1b671227bbc",
+        "size_in_bytes": 1268
+      },
+      {
+        "_path": "include/asl/asl_pfgh.h",
+        "path_type": "hardlink",
+        "sha256": "f632cea9e892234e52a4a67012b29b535447f92d7086afbb94d01bda40b3fdec",
+        "sha256_in_prefix": "f632cea9e892234e52a4a67012b29b535447f92d7086afbb94d01bda40b3fdec",
+        "size_in_bytes": 1288
+      },
+      {
+        "_path": "include/asl/aslbuilder.h",
+        "path_type": "hardlink",
+        "sha256": "e81ef4fdf9458f33dd666ffaa4ca1e44ead8a35cd970194d00acbe32589bd253",
+        "sha256_in_prefix": "e81ef4fdf9458f33dd666ffaa4ca1e44ead8a35cd970194d00acbe32589bd253",
+        "size_in_bytes": 24544
+      },
+      {
+        "_path": "include/asl/aslexpr-visitor.h",
+        "path_type": "hardlink",
+        "sha256": "1102ff23f49ffae70a1067e7b52b6d074c774419387103ad2771142c0ad6427c",
+        "sha256_in_prefix": "1102ff23f49ffae70a1067e7b52b6d074c774419387103ad2771142c0ad6427c",
+        "size_in_bytes": 1461
+      },
+      {
+        "_path": "include/asl/aslexpr.h",
+        "path_type": "hardlink",
+        "sha256": "c419c15fd9a4b308a71078f99eb029cd01305187539cbcfd96243c6e4d4d6eb4",
+        "sha256_in_prefix": "c419c15fd9a4b308a71078f99eb029cd01305187539cbcfd96243c6e4d4d6eb4",
+        "size_in_bytes": 22218
+      },
+      {
+        "_path": "include/asl/aslinterface.h",
+        "path_type": "hardlink",
+        "sha256": "c2df85979215cb97e400d14175f164abe91e2ce46932d228d3ff8c9a4cfca419",
+        "sha256_in_prefix": "c2df85979215cb97e400d14175f164abe91e2ce46932d228d3ff8c9a4cfca419",
+        "size_in_bytes": 2506
+      },
+      {
+        "_path": "include/asl/aslproblem.h",
+        "path_type": "hardlink",
+        "sha256": "ee4314b1a63d796c90770fe4ad4a68d8c3b52fd72a2288369e5c2d79388c5606",
+        "sha256_in_prefix": "ee4314b1a63d796c90770fe4ad4a68d8c3b52fd72a2288369e5c2d79388c5606",
+        "size_in_bytes": 21655
+      },
+      {
+        "_path": "include/asl/avltree.h",
+        "path_type": "hardlink",
+        "sha256": "cc826c9e8ee83f13551e27454ab84babf7f4198bdb3850dd6e9c1ede62c06fba",
+        "sha256_in_prefix": "cc826c9e8ee83f13551e27454ab84babf7f4198bdb3850dd6e9c1ede62c06fba",
+        "size_in_bytes": 4693
+      },
+      {
+        "_path": "include/asl/funcadd.h",
+        "path_type": "hardlink",
+        "sha256": "0478093ee5df64729639c1822847feb086366314be82fccb7074fc34a02f66b3",
+        "sha256_in_prefix": "0478093ee5df64729639c1822847feb086366314be82fccb7074fc34a02f66b3",
+        "size_in_bytes": 16205
+      },
+      {
+        "_path": "include/asl/getstub.h",
+        "path_type": "hardlink",
+        "sha256": "ed51ad45f30b6154ad2381321aeae3ef7ede2c37968de15193810949e68ea9e6",
+        "sha256_in_prefix": "ed51ad45f30b6154ad2381321aeae3ef7ede2c37968de15193810949e68ea9e6",
+        "size_in_bytes": 7079
+      },
+      {
+        "_path": "include/asl/jacpdim.h",
+        "path_type": "hardlink",
+        "sha256": "fea6afa9901cbf4b3a2a3918cc80e21bafb589c763e9129a2120e5c2d74e519c",
+        "sha256_in_prefix": "fea6afa9901cbf4b3a2a3918cc80e21bafb589c763e9129a2120e5c2d74e519c",
+        "size_in_bytes": 2483
+      },
+      {
+        "_path": "include/asl/nlp.h",
+        "path_type": "hardlink",
+        "sha256": "a3a8831e260c44a5b4d378ffc375af476e271944b88155a3cd690424f350e3c6",
+        "sha256_in_prefix": "a3a8831e260c44a5b4d378ffc375af476e271944b88155a3cd690424f350e3c6",
+        "size_in_bytes": 5474
+      },
+      {
+        "_path": "include/asl/nlp2.h",
+        "path_type": "hardlink",
+        "sha256": "c0f70f6f7e9b8cfe91f82b01c6055956162d8937156b8f8d7d6599e25fe3099e",
+        "sha256_in_prefix": "c0f70f6f7e9b8cfe91f82b01c6055956162d8937156b8f8d7d6599e25fe3099e",
+        "size_in_bytes": 7241
+      },
+      {
+        "_path": "include/asl/opcode.hd",
+        "path_type": "hardlink",
+        "sha256": "c0b1bbfb4981c876fbb55df10c1409896aed1fc343b9a6842405c8dd4e1390f1",
+        "sha256_in_prefix": "c0b1bbfb4981c876fbb55df10c1409896aed1fc343b9a6842405c8dd4e1390f1",
+        "size_in_bytes": 1348
+      },
+      {
+        "_path": "include/asl/psinfo.h",
+        "path_type": "hardlink",
+        "sha256": "c7e0012072d39b7d698e753ca49fa5121255f365cf6631a1b648c5c15a00e90c",
+        "sha256_in_prefix": "c7e0012072d39b7d698e753ca49fa5121255f365cf6631a1b648c5c15a00e90c",
+        "size_in_bytes": 9957
+      },
+      {
+        "_path": "include/asl/r_opn.hd",
+        "path_type": "hardlink",
+        "sha256": "32bb2a573600bca244aaf4397a79a1fff1a047618453d2785c00160366e27252",
+        "sha256_in_prefix": "32bb2a573600bca244aaf4397a79a1fff1a047618453d2785c00160366e27252",
+        "size_in_bytes": 412
+      },
+      {
+        "_path": "include/asl/stdio1.h",
+        "path_type": "hardlink",
+        "sha256": "fe4ab3d3b465a3ae437807e0cc20460dd5536956e7562edbecc3e892d279ce3e",
+        "sha256_in_prefix": "fe4ab3d3b465a3ae437807e0cc20460dd5536956e7562edbecc3e892d279ce3e",
+        "size_in_bytes": 3058
+      },
+      {
+        "_path": "include/mp/arrayref.h",
+        "path_type": "hardlink",
+        "sha256": "9d257ac204fa760d3238883cc5549bcbae08b39ca8699edd397b96f0e5d8b16f",
+        "sha256_in_prefix": "9d257ac204fa760d3238883cc5549bcbae08b39ca8699edd397b96f0e5d8b16f",
+        "size_in_bytes": 1845
+      },
+      {
+        "_path": "include/mp/basic-expr-visitor.h",
+        "path_type": "hardlink",
+        "sha256": "d02292d467e12b8f692b2e8003a587ec3e47bc4c375a965d682edaa3d718c03d",
+        "sha256_in_prefix": "d02292d467e12b8f692b2e8003a587ec3e47bc4c375a965d682edaa3d718c03d",
+        "size_in_bytes": 18379
+      },
+      {
+        "_path": "include/mp/clock.h",
+        "path_type": "hardlink",
+        "sha256": "f764a053975856622e5301363478e8afea1b52b1da8f3c477c28fa83e15d5f57",
+        "sha256_in_prefix": "f764a053975856622e5301363478e8afea1b52b1da8f3c477c28fa83e15d5f57",
+        "size_in_bytes": 4221
+      },
+      {
+        "_path": "include/mp/common.h",
+        "path_type": "hardlink",
+        "sha256": "1641bb69d9b3160d5fc7ede5d38e110bb8f5573dbb96ab5317301dc1b13e324c",
+        "sha256_in_prefix": "1641bb69d9b3160d5fc7ede5d38e110bb8f5573dbb96ab5317301dc1b13e324c",
+        "size_in_bytes": 25307
+      },
+      {
+        "_path": "include/mp/error.h",
+        "path_type": "hardlink",
+        "sha256": "414b4334e13a519cfebd3a29e3448e7e32fbff62d04a01dbfad3e1537572e694",
+        "sha256_in_prefix": "414b4334e13a519cfebd3a29e3448e7e32fbff62d04a01dbfad3e1537572e694",
+        "size_in_bytes": 2037
+      },
+      {
+        "_path": "include/mp/expr-visitor.h",
+        "path_type": "hardlink",
+        "sha256": "a8b48469f8041f6fd75f7c94f43393bba42d57e24642dc99899095825e06b417",
+        "sha256_in_prefix": "a8b48469f8041f6fd75f7c94f43393bba42d57e24642dc99899095825e06b417",
+        "size_in_bytes": 3164
+      },
+      {
+        "_path": "include/mp/expr.h",
+        "path_type": "hardlink",
+        "sha256": "1fbd1a3d2823db37c59287eea8550795efa08fc28fbccca34af08ac271cf3dc9",
+        "sha256_in_prefix": "1fbd1a3d2823db37c59287eea8550795efa08fc28fbccca34af08ac271cf3dc9",
+        "size_in_bytes": 35124
+      },
+      {
+        "_path": "include/mp/format.h",
+        "path_type": "hardlink",
+        "sha256": "0cd49a71f89b1797a2073c97e92293e9b8ef704d0f7ea500db5094dcb4fed4d9",
+        "sha256_in_prefix": "0cd49a71f89b1797a2073c97e92293e9b8ef704d0f7ea500db5094dcb4fed4d9",
+        "size_in_bytes": 113128
+      },
+      {
+        "_path": "include/mp/nl-reader.h",
+        "path_type": "hardlink",
+        "sha256": "ca07e442b2ae4e3bed9d6a2eb64f8bc094109de94ac3c4766bd7e8b805f0fca3",
+        "sha256_in_prefix": "ca07e442b2ae4e3bed9d6a2eb64f8bc094109de94ac3c4766bd7e8b805f0fca3",
+        "size_in_bytes": 78885
+      },
+      {
+        "_path": "include/mp/nl.h",
+        "path_type": "hardlink",
+        "sha256": "cb220ab467fe7b4f8b4ad1c0f90d3fbb4c208e051d5c15dfc6c17da427593838",
+        "sha256_in_prefix": "cb220ab467fe7b4f8b4ad1c0f90d3fbb4c208e051d5c15dfc6c17da427593838",
+        "size_in_bytes": 92
+      },
+      {
+        "_path": "include/mp/option.h",
+        "path_type": "hardlink",
+        "sha256": "81daf8d387d781198cc0522644f991c6dd3de3b90229e2c7b813e474ac9b45c4",
+        "sha256_in_prefix": "81daf8d387d781198cc0522644f991c6dd3de3b90229e2c7b813e474ac9b45c4",
+        "size_in_bytes": 3045
+      },
+      {
+        "_path": "include/mp/os.h",
+        "path_type": "hardlink",
+        "sha256": "b5600b5ac9b435ff10c3b1e5449af5883cc00cb06fb21f1e9dfd9458121e7243",
+        "sha256_in_prefix": "b5600b5ac9b435ff10c3b1e5449af5883cc00cb06fb21f1e9dfd9458121e7243",
+        "size_in_bytes": 3774
+      },
+      {
+        "_path": "include/mp/posix.h",
+        "path_type": "hardlink",
+        "sha256": "5dd336881046555fe54974f4662fcc7cefe356a862a0ba7e50468fd413a45c28",
+        "sha256_in_prefix": "5dd336881046555fe54974f4662fcc7cefe356a862a0ba7e50468fd413a45c28",
+        "size_in_bytes": 10902
+      },
+      {
+        "_path": "include/mp/problem-builder.h",
+        "path_type": "hardlink",
+        "sha256": "dd007c0a9d365db54406ba5d566d5dfcabc1574eb31c49c1838abd0b98465a96",
+        "sha256_in_prefix": "dd007c0a9d365db54406ba5d566d5dfcabc1574eb31c49c1838abd0b98465a96",
+        "size_in_bytes": 15627
+      },
+      {
+        "_path": "include/mp/problem.h",
+        "path_type": "hardlink",
+        "sha256": "507a3536b13cff45756aa5940b91546ca0e0fc72bfae266e09f694307524745c",
+        "sha256_in_prefix": "507a3536b13cff45756aa5940b91546ca0e0fc72bfae266e09f694307524745c",
+        "size_in_bytes": 27272
+      },
+      {
+        "_path": "include/mp/rstparser.h",
+        "path_type": "hardlink",
+        "sha256": "699646b9d850df4b005d5189f6b5324b4e0b527de5d52d81a0dc1471b49f1808",
+        "sha256_in_prefix": "699646b9d850df4b005d5189f6b5324b4e0b527de5d52d81a0dc1471b49f1808",
+        "size_in_bytes": 2951
+      },
+      {
+        "_path": "include/mp/safeint.h",
+        "path_type": "hardlink",
+        "sha256": "d77ed4af9f385a0423d1981e53bb865b436d8e430e00fca66fa20311c0c38595",
+        "sha256_in_prefix": "d77ed4af9f385a0423d1981e53bb865b436d8e430e00fca66fa20311c0c38595",
+        "size_in_bytes": 4387
+      },
+      {
+        "_path": "include/mp/sol.h",
+        "path_type": "hardlink",
+        "sha256": "cf4644e3419fa92a6aabe19e69724ea3805c416d0eb84dfbcde4689bca85ddf4",
+        "sha256_in_prefix": "cf4644e3419fa92a6aabe19e69724ea3805c416d0eb84dfbcde4689bca85ddf4",
+        "size_in_bytes": 3773
+      },
+      {
+        "_path": "include/mp/solver.h",
+        "path_type": "hardlink",
+        "sha256": "21277f5b965bc47009d14a6542af1631df4c98fe94ec74d5f788d9bbb09a6adc",
+        "sha256_in_prefix": "21277f5b965bc47009d14a6542af1631df4c98fe94ec74d5f788d9bbb09a6adc",
+        "size_in_bytes": 45483
+      },
+      {
+        "_path": "include/mp/suffix.h",
+        "path_type": "hardlink",
+        "sha256": "5e4f6c42724f39a3fe560c3fb82d67068feff245a9142992cad48c038e4cd86b",
+        "sha256_in_prefix": "5e4f6c42724f39a3fe560c3fb82d67068feff245a9142992cad48c038e4cd86b",
+        "size_in_bytes": 12891
+      },
+      {
+        "_path": "lib/libasl.a",
+        "path_type": "hardlink",
+        "sha256": "123bb2df9f8f0b69dc484150e49cff1871576f7e9df16b7c63b8a7c280e452b8",
+        "sha256_in_prefix": "123bb2df9f8f0b69dc484150e49cff1871576f7e9df16b7c63b8a7c280e452b8",
+        "size_in_bytes": 1753910
+      },
+      {
+        "_path": "lib/libasl.so",
+        "path_type": "softlink",
+        "sha256": "4571d802df08da9d5eb80d581dcb55f88d035def2962059f83aeb365f929a1a2",
+        "size_in_bytes": 906688
+      },
+      {
+        "_path": "lib/libasl.so.3",
+        "path_type": "softlink",
+        "sha256": "4571d802df08da9d5eb80d581dcb55f88d035def2962059f83aeb365f929a1a2",
+        "size_in_bytes": 906688
+      },
+      {
+        "_path": "lib/libasl.so.3.1.0",
+        "path_type": "hardlink",
+        "sha256": "4571d802df08da9d5eb80d581dcb55f88d035def2962059f83aeb365f929a1a2",
+        "sha256_in_prefix": "4571d802df08da9d5eb80d581dcb55f88d035def2962059f83aeb365f929a1a2",
+        "size_in_bytes": 906688
+      },
+      {
+        "_path": "lib/libmp.so",
+        "path_type": "softlink",
+        "sha256": "cc8b5a10cb6ac44128312db0a5b167310caa6321e8ba825f26a05ac0a511f46b",
+        "size_in_bytes": 363032
+      },
+      {
+        "_path": "lib/libmp.so.3",
+        "path_type": "softlink",
+        "sha256": "cc8b5a10cb6ac44128312db0a5b167310caa6321e8ba825f26a05ac0a511f46b",
+        "size_in_bytes": 363032
+      },
+      {
+        "_path": "lib/libmp.so.3.1.0",
+        "path_type": "hardlink",
+        "sha256": "cc8b5a10cb6ac44128312db0a5b167310caa6321e8ba825f26a05ac0a511f46b",
+        "sha256_in_prefix": "cc8b5a10cb6ac44128312db0a5b167310caa6321e8ba825f26a05ac0a511f46b",
+        "size_in_bytes": 363032
+      },
+      {
+        "_path": "share/mp/LICENSE.rst",
+        "path_type": "hardlink",
+        "sha256": "2383d4f3f73e1399b8423d5477847e618624e994745df033dcb54ca416d7b19f",
+        "sha256_in_prefix": "2383d4f3f73e1399b8423d5477847e618624e994745df033dcb54ca416d7b19f",
+        "size_in_bytes": 2811
+      }
+    ],
+    "paths_version": 1
+  },
+  "requested_spec": "None",
+  "sha256": "ff6e942d6490496d98d670f783275078d2a30c694202304ecd49fb759b93c07f",
+  "size": 1137486,
+  "subdir": "linux-64",
+  "timestamp": 1645057516176,
+  "track_features": "",
+  "url": "https://conda.anaconda.org/conda-forge/linux-64/ampl-mp-3.1.0-h2cc385e_1006.tar.bz2",
+  "version": "3.1.0"
+}

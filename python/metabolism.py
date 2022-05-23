@@ -44,6 +44,12 @@ def initialize(v_log_counts,f_log_counts,target_log_vcounts, S, K):
   beta_ini = np.reshape(betai_sol,(len(betai_sol),) )
   h_ini = np.reshape(hi_sol,(len(hi_sol),) )
 
+  # save for c++
+  path = "../data/python_feasible_point/"
+  np.savetxt(path + "variable_metabolites_log_counts.csv",n_ini, delimiter=',')
+  np.savetxt(path + "flux_variables.csv", y_ini, delimiter=',')
+  np.savetxt(path + "null_space_variables.csv",beta_ini, delimiter=',')
+
   return(beta_ini, y_ini,n_ini)
 
 def optimize(n_init, y_init, beta_init, f_log_counts,target_log_vcounts, S, K,obj_rxn_idx, max_iter = 10000):

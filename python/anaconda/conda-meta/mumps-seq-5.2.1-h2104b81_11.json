@@ -1,0 +1,170 @@
+{
+  "build": "h2104b81_11",
+  "build_number": 11,
+  "channel": "https://conda.anaconda.org/conda-forge/linux-64",
+  "constrains": [],
+  "depends": [
+    "libblas >=3.8.0,<4.0a0",
+    "libgcc-ng >=10.3.0",
+    "libgfortran-ng",
+    "libgfortran5 >=10.3.0",
+    "liblapack >=3.8.0,<4.0a0",
+    "metis >=5.1.0,<5.2.0a0",
+    "mumps-include >=5.2.1,<5.2.2.0a0",
+    "scotch >=6.0.9,<6.0.10.0a0"
+  ],
+  "extracted_package_dir": "/people/cann484/.conda/pkgs/mumps-seq-5.2.1-h2104b81_11",
+  "features": "",
+  "files": [
+    "include/mumps_seq/mpi.h",
+    "include/mumps_seq/mpif.h",
+    "lib/libcmumps_seq-5.2.1.so",
+    "lib/libcmumps_seq.so",
+    "lib/libdmumps_seq-5.2.1.so",
+    "lib/libdmumps_seq.so",
+    "lib/libmpiseq.so",
+    "lib/libmpiseq_seq-5.2.1.so",
+    "lib/libmpiseq_seq.so",
+    "lib/libmumps_common_seq-5.2.1.so",
+    "lib/libmumps_common_seq.so",
+    "lib/libpord_seq-5.2.1.so",
+    "lib/libpord_seq.so",
+    "lib/libsmumps_seq-5.2.1.so",
+    "lib/libsmumps_seq.so",
+    "lib/libzmumps_seq-5.2.1.so",
+    "lib/libzmumps_seq.so"
+  ],
+  "fn": "mumps-seq-5.2.1-h2104b81_11.tar.bz2",
+  "license": "CECILL-C",
+  "link": {
+    "source": "/people/cann484/.conda/pkgs/mumps-seq-5.2.1-h2104b81_11",
+    "type": 1
+  },
+  "md5": "e6a24045b070784d4e4f6647dcb7bc8d",
+  "name": "mumps-seq",
+  "package_tarball_full_path": "/people/cann484/.conda/pkgs/mumps-seq-5.2.1-h2104b81_11.tar.bz2",
+  "paths_data": {
+    "paths": [
+      {
+        "_path": "include/mumps_seq/mpi.h",
+        "path_type": "hardlink",
+        "sha256": "8db7d0528a612f30243bfd6f257d4fcec2e41d4d137f9358162dd57edbeee2e0",
+        "sha256_in_prefix": "8db7d0528a612f30243bfd6f257d4fcec2e41d4d137f9358162dd57edbeee2e0",
+        "size_in_bytes": 1746
+      },
+      {
+        "_path": "include/mumps_seq/mpif.h",
+        "path_type": "hardlink",
+        "sha256": "fc429da5fb1164a2f5f5ad0a948cb84be8e8b6717933e0362181aa5bd1066073",
+        "sha256_in_prefix": "fc429da5fb1164a2f5f5ad0a948cb84be8e8b6717933e0362181aa5bd1066073",
+        "size_in_bytes": 2685
+      },
+      {
+        "_path": "lib/libcmumps_seq-5.2.1.so",
+        "path_type": "hardlink",
+        "sha256": "b7f14bbdab8f96289bef4069542eeda21630372fc4d01da940306317112ab7a9",
+        "sha256_in_prefix": "b7f14bbdab8f96289bef4069542eeda21630372fc4d01da940306317112ab7a9",
+        "size_in_bytes": 2270664
+      },
+      {
+        "_path": "lib/libcmumps_seq.so",
+        "path_type": "softlink",
+        "sha256": "b7f14bbdab8f96289bef4069542eeda21630372fc4d01da940306317112ab7a9",
+        "size_in_bytes": 2270664
+      },
+      {
+        "_path": "lib/libdmumps_seq-5.2.1.so",
+        "path_type": "hardlink",
+        "sha256": "b7436db29b5511b869e390b16c6061a8e0b2f112e2cc6dbe786033543e111c75",
+        "sha256_in_prefix": "b7436db29b5511b869e390b16c6061a8e0b2f112e2cc6dbe786033543e111c75",
+        "size_in_bytes": 2229408
+      },
+      {
+        "_path": "lib/libdmumps_seq.so",
+        "path_type": "softlink",
+        "sha256": "b7436db29b5511b869e390b16c6061a8e0b2f112e2cc6dbe786033543e111c75",
+        "size_in_bytes": 2229408
+      },
+      {
+        "_path": "lib/libmpiseq.so",
+        "path_type": "softlink",
+        "sha256": "2b1442113ab28b5f5a6fa3502083ec26bd256434c2172a81cfc7180d02bfccf9",
+        "size_in_bytes": 49528
+      },
+      {
+        "_path": "lib/libmpiseq_seq-5.2.1.so",
+        "path_type": "hardlink",
+        "sha256": "2b1442113ab28b5f5a6fa3502083ec26bd256434c2172a81cfc7180d02bfccf9",
+        "sha256_in_prefix": "2b1442113ab28b5f5a6fa3502083ec26bd256434c2172a81cfc7180d02bfccf9",
+        "size_in_bytes": 49528
+      },
+      {
+        "_path": "lib/libmpiseq_seq.so",
+        "path_type": "softlink",
+        "sha256": "2b1442113ab28b5f5a6fa3502083ec26bd256434c2172a81cfc7180d02bfccf9",
+        "size_in_bytes": 49528
+      },
+      {
+        "_path": "lib/libmumps_common_seq-5.2.1.so",
+        "path_type": "hardlink",
+        "sha256": "ab361a452087cbd7a8cc73c66c8db9734566803f68f97c04594c4a9ae8590d17",
+        "sha256_in_prefix": "ab361a452087cbd7a8cc73c66c8db9734566803f68f97c04594c4a9ae8590d17",
+        "size_in_bytes": 423504
+      },
+      {
+        "_path": "lib/libmumps_common_seq.so",
+        "path_type": "softlink",
+        "sha256": "ab361a452087cbd7a8cc73c66c8db9734566803f68f97c04594c4a9ae8590d17",
+        "size_in_bytes": 423504
+      },
+      {
+        "_path": "lib/libpord_seq-5.2.1.so",
+        "path_type": "hardlink",
+        "sha256": "34f67f4518ad33d402039647383f966d7a670c44a30895cdd1027537f1af5982",
+        "sha256_in_prefix": "34f67f4518ad33d402039647383f966d7a670c44a30895cdd1027537f1af5982",
+        "size_in_bytes": 103056
+      },
+      {
+        "_path": "lib/libpord_seq.so",
+        "path_type": "softlink",
+        "sha256": "34f67f4518ad33d402039647383f966d7a670c44a30895cdd1027537f1af5982",
+        "size_in_bytes": 103056
+      },
+      {
+        "_path": "lib/libsmumps_seq-5.2.1.so",
+        "path_type": "hardlink",
+        "sha256": "ddbc5a9115726e642b08219b30654dac9518abf75338b5148005d074044d48ba",
+        "sha256_in_prefix": "ddbc5a9115726e642b08219b30654dac9518abf75338b5148005d074044d48ba",
+        "size_in_bytes": 2229456
+      },
+      {
+        "_path": "lib/libsmumps_seq.so",
+        "path_type": "softlink",
+        "sha256": "ddbc5a9115726e642b08219b30654dac9518abf75338b5148005d074044d48ba",
+        "size_in_bytes": 2229456
+      },
+      {
+        "_path": "lib/libzmumps_seq-5.2.1.so",
+        "path_type": "hardlink",
+        "sha256": "7fb1a8d0e5ee011c01e08fa7185190c67ea088911cd1e5330b0559fd94ba4617",
+        "sha256_in_prefix": "7fb1a8d0e5ee011c01e08fa7185190c67ea088911cd1e5330b0559fd94ba4617",
+        "size_in_bytes": 2250136
+      },
+      {
+        "_path": "lib/libzmumps_seq.so",
+        "path_type": "softlink",
+        "sha256": "7fb1a8d0e5ee011c01e08fa7185190c67ea088911cd1e5330b0559fd94ba4617",
+        "size_in_bytes": 2250136
+      }
+    ],
+    "paths_version": 1
+  },
+  "requested_spec": "None",
+  "sha256": "50144fe6e7b6dd6336381295329cc6b705f6c595d112e53fd0693ca1f0370bdd",
+  "size": 3437538,
+  "subdir": "linux-64",
+  "timestamp": 1647025071158,
+  "track_features": "",
+  "url": "https://conda.anaconda.org/conda-forge/linux-64/mumps-seq-5.2.1-h2104b81_11.tar.bz2",
+  "version": "5.2.1"
+}

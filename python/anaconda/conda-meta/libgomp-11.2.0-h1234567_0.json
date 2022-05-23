@@ -1,0 +1,59 @@
+{
+  "build": "h1234567_0",
+  "build_number": 0,
+  "channel": "https://repo.anaconda.com/pkgs/main/linux-64",
+  "constrains": [],
+  "depends": [
+    "_libgcc_mutex 0.1 main"
+  ],
+  "extracted_package_dir": "/people/cann484/.conda/pkgs/libgomp-11.2.0-h1234567_0",
+  "features": "",
+  "files": [
+    "lib/libgomp.so",
+    "lib/libgomp.so.1.0.0",
+    "share/licenses/gcc-libs/RUNTIME.LIBRARY.EXCEPTION.gomp_copy"
+  ],
+  "fn": "libgomp-11.2.0-h1234567_0.conda",
+  "legacy_bz2_md5": "7689dbd0e55de9656c4eac451fadcb60",
+  "license": "GPL-3.0-only WITH GCC-exception-3.1",
+  "link": {
+    "source": "/people/cann484/.conda/pkgs/libgomp-11.2.0-h1234567_0",
+    "type": 1
+  },
+  "md5": "c8acb8d9aff1ead1b273ace299ca12d2",
+  "name": "libgomp",
+  "package_tarball_full_path": "/people/cann484/.conda/pkgs/libgomp-11.2.0-h1234567_0.conda",
+  "paths_data": {
+    "paths": [
+      {
+        "_path": "lib/libgomp.so",
+        "path_type": "softlink",
+        "sha256": "3ac669ac1107c7e6277609ed6b567c04617d3e95ad5543cb5865f2670268e831",
+        "size_in_bytes": 1265616
+      },
+      {
+        "_path": "lib/libgomp.so.1.0.0",
+        "path_type": "hardlink",
+        "sha256": "3ac669ac1107c7e6277609ed6b567c04617d3e95ad5543cb5865f2670268e831",
+        "sha256_in_prefix": "3ac669ac1107c7e6277609ed6b567c04617d3e95ad5543cb5865f2670268e831",
+        "size_in_bytes": 1265616
+      },
+      {
+        "_path": "share/licenses/gcc-libs/RUNTIME.LIBRARY.EXCEPTION.gomp_copy",
+        "path_type": "hardlink",
+        "sha256": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74",
+        "sha256_in_prefix": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74",
+        "size_in_bytes": 3324
+      }
+    ],
+    "paths_version": 1
+  },
+  "requested_spec": "None",
+  "sha256": "af5e140f4545d54aaa12c263879b0f9c0d6a30b5d1e7735d85a1eb70bc64d50a",
+  "size": 484673,
+  "subdir": "linux-64",
+  "timestamp": 1652859691785,
+  "track_features": "",
+  "url": "https://repo.anaconda.com/pkgs/main/linux-64/libgomp-11.2.0-h1234567_0.conda",
+  "version": "11.2.0"
+}
