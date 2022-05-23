@@ -51,17 +51,23 @@ maximum_entropy_solver
     //Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp(stoich_matrix_variable_metab_section);
     //matrix_t null_space_stoich_matrix_variable_metab_section = lu_decomp.kernel();
     //size_t dim_null_space = lu_decomp.dimensionOfKernel();
-    CompleteOrthogonalDecomposition<matrix_t> cod;
+    /*
+    Eigen::CompleteOrthogonalDecomposition<matrix_t> cod;
     cod.compute(stoich_matrix_variable_metab_section);
     int rk = cod.rank();
     matrix_t P = cod.colsPermutation();
     matrix_t V = cod.matrixZ().transpose();
     matrix_t null_space_stoich_matrix_variable_metab_section 
         = P * V.block(0, rk, V.rows(), V.cols() - rk);
+    */
+    Eigen::JacobiSVD<matrix_t> svd(stoich_matrix_variable_metab_section, Eigen::ComputeFullV);
+    int rnk = svd.rank();
+    matrix_t null_space_stoich_matrix_variable_metab_section 
+        = svd.matrixV()(Eigen::seq(rnk+4, Eigen::last), Eigen::all).transpose().conjugate();
 
-    std::cout << "\nkernel dim " << cod.dimensionOfKernel << "\n";
-    std::cout << "\nkernel rank " << rk << "\n";
-    size_t dim_null_space = cod.dimensionOfKernel;
+    std::cout << "\nkernel rank " << rnk << "\n";
+    size_t dim_null_space = null_space_stoich_matrix_variable_metab_section.cols();
+    std::cout << "\nkernel dim " << dim_null_space << "\n";
 
 
     // precompute SVS
@@ -256,12 +262,14 @@ maximum_entropy_solver
     //
 
     // print out initial state
-    //nlp.PrintCurrent();
+    nlp.PrintCurrent();
 
     // initialize solver
     ifopt::IpoptSolver ipopt;
     ipopt.SetOption("linear_solver", "mumps"); // change if desired
-    ipopt.SetOption("jacobian_approximation", "exact"); // keep this because we specified jacobians
+    ipopt.SetOption("jacobian_approximation", "finite-difference-values"); // keep this because we specified jacobians
+    ipopt.SetOption("max_cpu_time", 100.0);
+    //ipopt.SetOption("tol", 0.00001)
 
     // solve the problem
     ipopt.Solve(nlp);
