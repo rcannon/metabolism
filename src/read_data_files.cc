@@ -36,7 +36,7 @@ load_concentrations( const std::string& path)
     std::string line;
     std::vector<value_t> values;
 
-    //vector_t res_vector;
+    vector_t res_vector;
     size_t num_variable;
     size_t num_total;
     size_t rows = 0;
@@ -59,7 +59,7 @@ load_concentrations( const std::string& path)
         ++rows;
     }
 
-    auto res_vector = Map<vector_t>(values.data(), values.size(), 1);
+    res_vector = Map<vector_t>(values.data(), values.size(), 1);
 
     return { num_variable, res_vector };
 }
@@ -132,8 +132,9 @@ load_equilibrium_constants( const std::string& path)
     return { num_uptake, num_output, obj_idxs, res_vector };
 }
 
+// generic read matrix from csv
 matrix_t
-load_stochiometric_matrix( const std::string& path)
+read_to_matrix( const std::string& path)
 {
     std::ifstream indata;
     indata.open(path);
@@ -141,7 +142,7 @@ load_stochiometric_matrix( const std::string& path)
     std::vector<double> values;
 
     int rows = 0;
-    // read matrix
+
     while (std::getline(indata, line)) {
         std::stringstream lineStream(line);
         std::string cell;
@@ -150,6 +151,26 @@ load_stochiometric_matrix( const std::string& path)
         }
         ++rows;
     }
-    // Matrix<double, Dynamic, Dynamic, RowMajor>
     return Map<matrix_t>(values.data(), rows, values.size() / rows);
+}
+
+// generic read vector from csv
+vector_t
+read_to_vector(const std::string path)
+{
+    std::ifstream indata;
+    indata.open(path);
+    std::string line;
+    std::vector<value_t> values;
+
+    while (std::getline(indata, line)) {
+        std::stringstream lineStream(line);
+        std::string cell;
+        while (std::getline(lineStream, cell, ',')) {
+            values.push_back(std::stod(cell));
+        }
+    }
+    vector_t res = Eigen::Map<vector_t>(values.data(), values.size(), 1);
+
+    return res;
 }

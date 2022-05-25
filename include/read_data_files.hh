@@ -12,4 +12,7 @@ std::tuple<size_t, size_t, index_list_t, vector_t>
 load_equilibrium_constants( const std::string& path);
 
 matrix_t
-load_stochiometric_matrix( const std::string& path);
+read_to_matrix( const std::string& path);
+
+vector_t
+read_to_vector(const std::string& path);

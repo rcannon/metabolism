@@ -5,18 +5,22 @@ namespace ifopt {
 
 Variables::Variables( const std::string& name
                     , const int num_variables
+                    , const bool is_u_variables
                     )
                     : VariableSet(num_variables, name)
                     , num_variables_(num_variables)
+                    , is_u_variables_(is_u_variables)
                     , variables_(vector_t::Zero(num_variables))
 {}
 
 Variables::Variables( const std::string& name
                     , const int num_variables
+                    , const bool is_u_variables
                     , const vector_t& init_values
                     )
                     : VariableSet(num_variables, name)
                     , num_variables_(num_variables)
+                    , is_u_variables_(is_u_variables)
                     , variables_(init_values)
 {
     assert(num_variables_ == variables_.size());
@@ -48,8 +52,15 @@ Variables::GetBounds() // metabolite bounds moved to constraints class
 const
 {
     VecBound bounds(GetRows());
-    for (int i = 0; i < num_variables_; i++){
-        bounds.at(i) = NoBound; 
+    if (is_u_variables_) {
+        for (int i = 0; i < num_variables_; i++){
+            bounds.at(i) = Bounds(0.0, 1.0);
+        }
+    }
+    else {
+        for (int i = 0; i < num_variables_; i++){
+            bounds.at(i) = NoBound; 
+        }
     }
     return bounds;
 }

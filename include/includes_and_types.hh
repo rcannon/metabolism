@@ -24,5 +24,5 @@
 typedef double value_t;
 typedef std::vector<value_t> value_list_t;
 typedef std::vector<int> index_list_t;
-typedef Eigen::MatrixXd matrix_t;
+typedef Eigen::Matrix<value_t, -1, -1, Eigen::RowMajor> matrix_t;
 typedef Eigen::VectorXd vector_t;

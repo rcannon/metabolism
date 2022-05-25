@@ -1,15 +1,24 @@
 
 TODO:
-    get feasible point output from python, plug into c++
+    - remove all instances of auto
+        - see: https://stackoverflow.com/questions/29231798/eigen-how-to-make-a-deep-copy-of-a-matrix
+    - set all initial variables base on metabolitees and beta
+    - move metabolite lower upper bounds to variables
 
 
+Ideas (in order of subjective likelihood of success)
+----------------------------------------------------
+    - try with other smooth constraint
+    - try reading in null_space matrix
+        - make sure flux vars are close to zero
+    - check constraints again
+    - run eigen and ifopt in production mode
+    - better solver: HSL ma57
+        - https://www.hsl.rl.ac.uk/download/coinhsl/2021.05.05/
+    - try different jacobian for max ent problem formulation equation 96
+    - loosen equality bounds, since IFOPT might remove them from problem
 
 
-Thoughts
-    - optimization: if we know n_metabolites_, we know dimension of matrices and vectors.
-        - define different vector_t and matrix_t types inside class
-    - optimization: build vectors/matrix inside Constraint class
-        - or use std::move if they wont be used later.
 Questions for Ethan
     - m.SvS is never used
 
@@ -17,13 +26,16 @@ Questions for Ethan
 USAGE NOTES
 ****************************************************************************
 
+DO NOT EVER USE auto types with eigen
+    - https://stackoverflow.com/questions/29231798/eigen-how-to-make-a-deep-copy-of-a-matrix
+
 ifopt does not do variable indices like pyomo. This came up when 
     separating the variable metabolites from the fixed metabolites and also
     when fitting the target_counts to be the same size as the variable metabolites.
     The python code seemed to just select the variable metabolites from the
     front of the array, so this is what I did.
 
-eigen objects and any object that contains an eigin object MUST be 
+eigen objects of fixed size and any object that contains an eigin object of fixed size MUST be 
     passed by reference and never by value. or else memory become unaligned. 
     Returning by value is fine though.
 

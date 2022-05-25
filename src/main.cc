@@ -24,21 +24,19 @@ main()
 
 
     // read the stochiometric matrix from the file
-    matrix_t stoichiometric_matrix = load_stochiometric_matrix("../data/StoichiometricMatrix.csv");
+    matrix_t stoichiometric_matrix = read_to_matrix("../data/StoichiometricMatrix.csv");
 
     int num_reactions = stoichiometric_matrix.rows();
 
     // get the target log counts for the variable metabolites
-    value_t n_Avagadro = std::pow(6.022140857, 23);
+    value_t n_Avagadro = 6.022140857 * std::pow(10,23);
     value_t cell_volume = std::pow(10, -15);
     value_t concentration_to_count = n_Avagadro * cell_volume;
     value_t concentration_increment = std::pow(concentration_to_count, -1);
-    vector_t target_log_variable_metabolites_count = 
-        ( vector_t::Constant(num_variable_metabolites, 1.0) 
-        * std::pow(10, -3)
-        * concentration_to_count
-        ).array().log().matrix();
 
+    //double target_val = 6.022140857 * std::pow(10, 5);
+    double target_val = std::log( concentration_to_count * std::pow(10, -3) );
+    vector_t target_log_variable_metabolites_count = vector_t::Constant(num_variable_metabolites, target_val);
     int Vmax = 1000;
     double s = 0.085;
     double Km = 0.5*s;
@@ -55,11 +53,11 @@ main()
     vector_t reaction_flux = std::get<0>(run_results);
     variable_metabolites = std::get<1>(run_results);
 
-    int nutrient_ratio = 1;
+    double nutrient_ratio = 1;
     double s_new;
     vector_t scaled_flux2;
     for (int step = 0; step < 5; step++){
-
+        std::cout << "\nStep " << step << "\n" << std::endl;
         s_new = s + 0.04 * s;
         nutrient_ratio = nutrient_ratio * (s_new/s);
 
@@ -79,7 +77,7 @@ main()
         }
         scaled_flux2 = scale_flux(reaction_flux, iuptake, Vmax, Km, s);
 
-        std::cout << "scale_flux2: " << scaled_flux2(iuptake) << "\n";
+        std::cout << "scale_flux2: " << scaled_flux2(iuptake) << "\n" <<std::endl;
     }
     return 0;
 }

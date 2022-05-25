@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/opt/conda/conda-bld/openssl_1652103046904/_build_env/bin/perl
 # Copyright 2002-2018 The OpenSSL Project Authors. All Rights Reserved.
 # Copyright (c) 2002 The OpenTSA Project. All rights reserved.
 #

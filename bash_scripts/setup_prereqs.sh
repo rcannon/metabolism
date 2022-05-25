@@ -2,7 +2,6 @@
 
 cd $PROJECT_DIR
 
-source bash_scripts/env.sh
 mkdir PREREQS_INSTALL
 
 echo

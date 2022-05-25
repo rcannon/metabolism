@@ -167,7 +167,8 @@ scale_flux
     )
 {
     double V = Vmax * s/(Km + s);
-    vector_t scaled_flux = V/reaction_flux(iglucose) * reaction_flux;
+    double rxn_flux_val = reaction_flux(iglucose);
+    vector_t scaled_flux = (V/rxn_flux_val) * reaction_flux;
 
     return reaction_flux;
 }
@@ -229,7 +230,7 @@ run_metabolism
         }
     }
     int num_total_metabolites = variable_metabolites.size() + fixed_metabolites_log_counts.size();
-    auto delta = vector_t::Zero(num_total_metabolites);
+    vector_t delta = vector_t::Zero(num_total_metabolites);
     double mu0 = 1.0;
     vector_t reaction_flux = odds_diff
         ( variable_metabolites

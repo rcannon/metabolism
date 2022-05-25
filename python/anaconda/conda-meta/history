@@ -97,3 +97,13 @@
 +conda-forge/linux-64::scotch-6.0.9-h3858553_1
 +conda-forge/linux-64::unixodbc-2.3.10-h583eb01_0
 # update specs: ['ipopt']
+==> 2022-05-25 09:54:49 <==
+# cmd: /share/apps/python/miniconda3.9/bin/conda install numpy
+# conda version: 4.10.3
+-conda-forge/linux-64::ca-certificates-2022.5.18.1-ha878542_0
+-conda-forge/linux-64::certifi-2022.5.18.1-py310hff52083_0
+-conda-forge/linux-64::openssl-1.1.1o-h166bdaf_0
++defaults/linux-64::ca-certificates-2022.4.26-h06a4308_0
++defaults/linux-64::certifi-2022.5.18.1-py310h06a4308_0
++defaults/linux-64::openssl-1.1.1o-h7f8727e_0
+# update specs: ['numpy']

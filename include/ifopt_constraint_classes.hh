@@ -77,17 +77,17 @@ public:
                             , Jacobian& jac_block
                             ) const override;
 private:
-    vector_t CalculateSmoothConstraintGradientFluxVariables() const;
+    //vector_t CalculateSmoothConstraintGradientFluxVariables() const;
     const int n_reactions_;
     const std::string flux_variables_name_;
     const std::string h_variables_name_;
 };
 
 
-class RelaxedFluxUpperConstraint : public ConstraintSet {
+class RelaxedRegulationUpperConstraint : public ConstraintSet {
     // MEPPF 97
 public:
-    RelaxedFluxUpperConstraint
+    RelaxedRegulationUpperConstraint
         ( const std::string& name
         , const int n_reactions
         , const std::string& steady_state_variables_name
@@ -111,10 +111,10 @@ private:
 };
 
 
-class RelaxedFluxLowerConstraint : public ConstraintSet {
+class RelaxedRegulationLowerConstraint : public ConstraintSet {
     // MEPPF 98
 public:
-    RelaxedFluxLowerConstraint
+    RelaxedRegulationLowerConstraint
         ( const std::string& name
         , const int n_reactions
         , const std::string& steady_state_variables_name
@@ -163,10 +163,10 @@ private:
 };
 
 
-class RelaxedFluxSignConstraint : public ConstraintSet {
+class RelaxedRegulationSignConstraint : public ConstraintSet {
     // MEPPF 100
 public:
-    RelaxedFluxSignConstraint
+    RelaxedRegulationSignConstraint
         ( const std::string& name
         , const int n_reactions
         , const std::string& flux_variables_name

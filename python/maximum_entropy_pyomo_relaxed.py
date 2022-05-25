@@ -53,6 +53,7 @@ def Max_ent_solver(n_ini,y_ini,beta_ini,target_log_vcounts, f_log_counts, S, K,o
 
     #find a basis for the nullspace of S_v
     Sv_N = spL.null_space(S_v)
+    np.savetxt("../data/python_feasible_point/null_space_matrix.csv",Sv_N, delimiter=',')
     dSv_N = np.shape(Sv_N)[1] # the dimension of the nullspace
 
     # Steady State satisfies the following least squares problem
@@ -78,10 +79,8 @@ def Max_ent_solver(n_ini,y_ini,beta_ini,target_log_vcounts, f_log_counts, S, K,o
     #Set the initial condition
     b_ini = np.matmul(S_v_T,np.reshape(n_ini,(len(n_ini),1))) + np.matmul(S_f_T,np.reshape(FxdM,(n_M_f,1) )    )
     b_ini = np.reshape(b_ini,len(b_ini))
-    
    
     h_ini = np.sign(y_ini)*( np.log(2) - np.log( np.abs(y_ini) + np.sqrt( np.power(y_ini,2) + 4 ) )  )
-    
 
     ## Set the optimization parameters
     VarM_lbnd = -300 #lower bound on the log metabolite counts
@@ -312,7 +311,6 @@ def Max_ent_solver(n_ini,y_ini,beta_ini,target_log_vcounts, f_log_counts, S, K,o
     
 
     return(b_sol, y_sol, alpha_sol, h_sol, beta_sol, n_sol)
-
 
 
 

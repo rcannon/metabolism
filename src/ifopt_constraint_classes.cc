@@ -32,10 +32,10 @@ const
 {
     // Maximum Entropy Production Problem Formulation 94
 
-    vector_t beta_vec = GetVariables()->GetComponent(beta_variables_name_)->GetValues();
-    vector_t fluxes = GetVariables()->GetComponent(flux_variables_name_)->GetValues();
+    const vector_t beta_vec = GetVariables()->GetComponent(beta_variables_name_)->GetValues();
+    const vector_t fluxes = GetVariables()->GetComponent(flux_variables_name_)->GetValues();
 
-    vector_t result = ((null_space_matrix_ * beta_vec) - fluxes);
+    const vector_t result = ((null_space_matrix_ * beta_vec) - fluxes);
 
     return result;
 }
@@ -117,10 +117,10 @@ const
 {
     // Maximum Entropy Production Problem Formulation 95
 
-    vector_t steady_state_variables = GetVariables()->GetComponent(steady_state_variables_name_)->GetValues();
-    vector_t variable_metabolites = GetVariables()->GetComponent(variable_metabolites_name_)->GetValues();
+    const vector_t steady_state_variables = GetVariables()->GetComponent(steady_state_variables_name_)->GetValues();
+    const vector_t variable_metabolites = GetVariables()->GetComponent(variable_metabolites_name_)->GetValues();
 
-    vector_t result = (variable_metabolite_stoich_matrix_T_ * variable_metabolites) 
+    const vector_t result = (variable_metabolite_stoich_matrix_T_ * variable_metabolites) 
                     + (fixed_metabolite_stoich_matrix_T_ * fixed_metabolites_)
                     - steady_state_variables;
 
@@ -186,23 +186,22 @@ vector_t
 SmoothConstraint::GetValues()
 const
 {
-    // Maximum Entropy Production Problem Formulation 96
+    const vector_t fluxes = GetVariables()->GetComponent(flux_variables_name_)->GetValues();
+    const vector_t coeff = 
+        (   std::pow(10, 50) * fluxes.array() / ((std::pow(10, 50) * fluxes.array().abs()) + std::pow(10, -50))
+        *   (std::log(2) - Eigen::log( fluxes.array().abs() + Eigen::sqrt(fluxes.array().pow(2) + 4)))
+        ).matrix();
+    /*    ( fluxes.array().sign()
+        *   ( std::log(2) 
+            - Eigen::log( fluxes.array().abs()
+                        + Eigen::sqrt( fluxes.array().pow(2) + 4 )
+                        ) 
+            )
+        ).matrix();*/
+    const vector_t h_variables = GetVariables()->GetComponent(h_variables_name_)->GetValues();
+    const vector_t result = coeff - h_variables;
 
-    auto h_variables = GetVariables()->GetComponent(h_variables_name_)->GetValues().array();
-    auto fluxes_array = GetVariables()->GetComponent(flux_variables_name_)->GetValues().array();
-    auto sign_fluxes = fluxes_array.sign();
-    auto abs_fluxes = fluxes_array.abs();
-    auto square_fluxes = fluxes_array.pow(2);
-
-    auto result = sign_fluxes
-                * ( std::log(2) 
-                  - Eigen::log( abs_fluxes
-                              + Eigen::sqrt( square_fluxes + 4 )
-                              ) 
-                  )
-                - h_variables;
-
-    return result.matrix();
+    return result;
 }
 
 ConstraintSet::VecBound
@@ -220,7 +219,8 @@ SmoothConstraint::FillJacobianBlock
     ( std::string var_set
     , Jacobian& jac_block
     )
-const
+const {}
+/*
 {
     int row_end = n_reactions_;
 
@@ -242,22 +242,22 @@ const
 vector_t
 SmoothConstraint::CalculateSmoothConstraintGradientFluxVariables()
 const
-{
-    auto flux_array_squared = GetVariables()->GetComponent(flux_variables_name_)->GetValues().array().pow(2);
-    auto result = (flux_array_squared + 4).sqrt().inverse();
-
-    return result.matrix();
-}
+{   
+    const vector_t flux_squared = GetVariables()->GetComponent(flux_variables_name_)->GetValues().array().pow(2).matrix();
+    const vector_t result = (flux_squared.array() + 4).sqrt().inverse().matrix();
+    // maybe -1 *
+    return result;
+}*/
 
 //
 // End SmoothConstraint
 //
 
 //
-// RelaxedFluxUpperConstraint
+// RelaxedRegulationUpperConstraint
 //
 
-RelaxedFluxUpperConstraint::RelaxedFluxUpperConstraint
+RelaxedRegulationUpperConstraint::RelaxedRegulationUpperConstraint
     ( const std::string& name
     , const int n_reactions
     , const std::string& steady_state_variables_name
@@ -278,23 +278,23 @@ RelaxedFluxUpperConstraint::RelaxedFluxUpperConstraint
 }
 
 vector_t
-RelaxedFluxUpperConstraint::GetValues()
+RelaxedRegulationUpperConstraint::GetValues()
 const
 {
     // Maximum Entropy Production Problem Formulation 97
     
-    vector_t h_variables = GetVariables()->GetComponent(h_variables_name_)->GetValues();
-    vector_t u_variables = GetVariables()->GetComponent(u_variables_name_)->GetValues();
-    vector_t steady_state_variables = GetVariables()->GetComponent(steady_state_variables_name_)->GetValues();
-    vector_t log_equilibrium_constants = equilibrium_constants_.array().log().matrix();
+    const vector_t h_variables = GetVariables()->GetComponent(h_variables_name_)->GetValues();
+    const vector_t u_variables = GetVariables()->GetComponent(u_variables_name_)->GetValues();
+    const vector_t steady_state_variables = GetVariables()->GetComponent(steady_state_variables_name_)->GetValues();
+    const vector_t log_equilibrium_constants = equilibrium_constants_.array().log().matrix();
 
-    vector_t result = h_variables - (big_M_value_ * u_variables) + log_equilibrium_constants - steady_state_variables;
+    const vector_t result = h_variables - (big_M_value_ * u_variables) + log_equilibrium_constants - steady_state_variables;
 
     return result;
 }
 
 ConstraintSet::VecBound
-RelaxedFluxUpperConstraint::GetBounds()
+RelaxedRegulationUpperConstraint::GetBounds()
 const
 {
     VecBound b(GetRows());
@@ -304,7 +304,7 @@ const
 }
 
 void
-RelaxedFluxUpperConstraint::FillJacobianBlock
+RelaxedRegulationUpperConstraint::FillJacobianBlock
     ( std::string var_set
     , Jacobian& jac_block
     )
@@ -332,14 +332,14 @@ const
 }
 
 //
-// End RelaxedFluxUpperConstraint
+// End RelaxedRegulationUpperConstraint
 //
 
 //
-// RelaxedFLuxLowerConstraint
+// RelaxedRegulationLowerConstraint
 //
 
-RelaxedFluxLowerConstraint::RelaxedFluxLowerConstraint
+RelaxedRegulationLowerConstraint::RelaxedRegulationLowerConstraint
     ( const std::string& name
     , const int n_reactions
     , const std::string& steady_state_variables_name
@@ -360,24 +360,24 @@ RelaxedFluxLowerConstraint::RelaxedFluxLowerConstraint
 }
 
 vector_t
-RelaxedFluxLowerConstraint::GetValues()
+RelaxedRegulationLowerConstraint::GetValues()
 const
 {
     // Maximum Entropy Production Problem Formulation 98
     
-    vector_t h_variables = GetVariables()->GetComponent(h_variables_name_)->GetValues();
-    vector_t u_variables = GetVariables()->GetComponent(u_variables_name_)->GetValues();
-    vector_t one_minus_u = (1 - u_variables.array()).matrix();
-    vector_t steady_state_variables = GetVariables()->GetComponent(steady_state_variables_name_)->GetValues();
-    vector_t log_equilibrium_constants = equilibrium_constants_.array().log().matrix();
+    const vector_t h_variables = GetVariables()->GetComponent(h_variables_name_)->GetValues();
+    const vector_t u_variables = GetVariables()->GetComponent(u_variables_name_)->GetValues();
+    const vector_t one_minus_u = (1 - u_variables.array()).matrix();
+    const vector_t steady_state_variables = GetVariables()->GetComponent(steady_state_variables_name_)->GetValues();
+    const vector_t log_equilibrium_constants = equilibrium_constants_.array().log().matrix();
 
-    vector_t result = h_variables + (big_M_value_ * one_minus_u) + log_equilibrium_constants - steady_state_variables;
+    const vector_t result = h_variables + (big_M_value_ * one_minus_u) + log_equilibrium_constants - steady_state_variables;
 
     return result;
 }
 
 ConstraintSet::VecBound
-RelaxedFluxLowerConstraint::GetBounds()
+RelaxedRegulationLowerConstraint::GetBounds()
 const
 {
     VecBound b(GetRows());
@@ -387,7 +387,7 @@ const
 }
 
 void
-RelaxedFluxLowerConstraint::FillJacobianBlock
+RelaxedRegulationLowerConstraint::FillJacobianBlock
     ( std::string var_set
     , Jacobian& jac_block
     )
@@ -415,7 +415,7 @@ const
 }
 
 //
-// End RelaxedFLuxLowerConstraint
+// End RelaxedRegulationLowerConstraint
 //
 
 //
@@ -442,11 +442,14 @@ const
 {
     // Maximum Entropy Production Problem Formulation 99
 
-    auto fluxes_array = GetVariables()->GetComponent(flux_variables_name_)->GetValues().array();
-    auto log_equilibrium_constants_array = equilibrium_constants_.array().log();
-    auto steady_state_variables_array = GetVariables()->GetComponent(steady_state_variables_name_)->GetValues().array();
+    const vector_t fluxes = GetVariables()->GetComponent(flux_variables_name_)->GetValues();
+    const vector_t log_equilibrium_constants = equilibrium_constants_.array().log().matrix();
+    const vector_t steady_state_variables = GetVariables()->GetComponent(steady_state_variables_name_)->GetValues();
 
-    auto result = (log_equilibrium_constants_array - steady_state_variables_array) *  fluxes_array;
+    const vector_t result = 
+        (
+            (log_equilibrium_constants.array() - steady_state_variables.array()) * fluxes.array()
+        ).matrix();
 
     return result.matrix();
 }
@@ -472,7 +475,7 @@ const
 
     if (var_set == flux_variables_name_) {
         // aka y in MEPPF
-        vector_t gradient = CalculateSignConstraintGadientFluxVariables().eval();
+        const vector_t gradient = CalculateSignConstraintGadientFluxVariables().eval();
         for (int diag = 0; diag < row_end; diag ++) {
             jac_block.coeffRef( diag, diag ) = gradient(diag);
         }
@@ -480,7 +483,7 @@ const
     }
     else if (var_set == steady_state_variables_name_) {
         // aka g in MEPPF
-        vector_t gradient = CalculateSignConstraintGradientSteadyStateVariables().eval();
+        const vector_t gradient = CalculateSignConstraintGradientSteadyStateVariables().eval();
         for (int diag = 0; diag < row_end; diag++) {
             jac_block.coeffRef( diag, diag ) = gradient(diag);
         }
@@ -491,8 +494,8 @@ vector_t
 SignConstraint::CalculateSignConstraintGadientFluxVariables() 
 const
 {
-    auto steady_state_variables = GetVariables()->GetComponent(steady_state_variables_name_)->GetValues();
-    vector_t result = equilibrium_constants_.array().log().matrix() - steady_state_variables;
+    const vector_t steady_state_variables = GetVariables()->GetComponent(steady_state_variables_name_)->GetValues();
+    const vector_t result = equilibrium_constants_.array().log().matrix() - steady_state_variables;
 
     return result;
 }
@@ -501,8 +504,8 @@ vector_t
 SignConstraint::CalculateSignConstraintGradientSteadyStateVariables()
 const
 {
-    vector_t flux_variables = GetVariables()->GetComponent(flux_variables_name_)->GetValues();
-    vector_t result = -1.0 * flux_variables;
+    const vector_t flux_variables = GetVariables()->GetComponent(flux_variables_name_)->GetValues();
+    const vector_t result = -1.0 * flux_variables;
 
     return result;
 }
@@ -512,10 +515,10 @@ const
 //
 
 //
-// RelaxedFluxSignConstraint
+// RelaxedRegulationSignConstraint
 //
 
-RelaxedFluxSignConstraint::RelaxedFluxSignConstraint
+RelaxedRegulationSignConstraint::RelaxedRegulationSignConstraint
     ( const std::string& name
     , const int n_reactions
     , const std::string& flux_variables_name
@@ -528,22 +531,25 @@ RelaxedFluxSignConstraint::RelaxedFluxSignConstraint
 {}
 
 vector_t
-RelaxedFluxSignConstraint::GetValues()
+RelaxedRegulationSignConstraint::GetValues()
 const
 {
     // Maximum Entropy Production Problem Formulation 100
 
-    auto fluxes_array = GetVariables()->GetComponent(flux_variables_name_)->GetValues().array();
-    auto sign_fluxes = fluxes_array.sign();
-    auto u_variables_array = GetVariables()->GetComponent(u_variables_name_)->GetValues().array();
+    const vector_t fluxes = GetVariables()->GetComponent(flux_variables_name_)->GetValues();
+    const vector_t sign_fluxes = fluxes.array().sign().matrix();
+    const vector_t u_variables = GetVariables()->GetComponent(u_variables_name_)->GetValues();
 
-    auto result = (2 * u_variables_array) - 1 - sign_fluxes;
+    const vector_t result = 
+        (
+            (2 * u_variables.array()) - 1 - sign_fluxes.array()
+        ).matrix();
 
-    return result.matrix();
+    return result;
 }
 
 ConstraintSet::VecBound
-RelaxedFluxSignConstraint::GetBounds()
+RelaxedRegulationSignConstraint::GetBounds()
 const
 {
     VecBound b(GetRows());
@@ -553,7 +559,7 @@ const
 }
 
 void
-RelaxedFluxSignConstraint::FillJacobianBlock
+RelaxedRegulationSignConstraint::FillJacobianBlock
     ( std::string var_set
     , Jacobian& jac_block
     )
@@ -577,7 +583,7 @@ const
 }
 
 //
-// End RelaxedFluxSignConstraint
+// End RelaxedRegulationSignConstraint
 //
 
 //
@@ -604,12 +610,14 @@ const
 {
     // Maximum Entropy Production Problem Formulation 101 upper bounds
 
-    vector_t variable_metabolites = GetVariables()->GetComponent(variable_metabolites_name_)->GetValues();
-    auto metabolites_array = variable_metabolites.array();
+    const vector_t variable_metabolites = GetVariables()->GetComponent(variable_metabolites_name_)->GetValues();
 
-    auto result = variable_metabolites_upper_bound_.array() - metabolites_array;
+    const vector_t result = 
+        (
+            variable_metabolites_upper_bound_.array() - variable_metabolites.array()
+        ).matrix();
 
-    return result.matrix();
+    return result;
 }
 
 ConstraintSet::VecBound
@@ -665,12 +673,14 @@ const
 {
     // Maximum Entropy Production Problem Formulation 101 lower bounds
 
-    vector_t variable_metabolites = GetVariables()->GetComponent(variable_metabolites_name_)->GetValues();
-    auto metabolites_array = variable_metabolites.array();
+    const vector_t variable_metabolites = GetVariables()->GetComponent(variable_metabolites_name_)->GetValues();
 
-    auto result = variable_metabolites_lower_bound_ - metabolites_array;
+    const vector_t result = 
+        (
+            variable_metabolites_lower_bound_ - variable_metabolites.array()
+        ).matrix();
 
-    return result.matrix();
+    return result;
 }
 
 ConstraintSet::VecBound
