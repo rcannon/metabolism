@@ -1,3 +1,0 @@
-/people/cann484/metab/build/CMakeFiles/edit_cache.dir
-/people/cann484/metab/build/CMakeFiles/rebuild_cache.dir
-/people/cann484/metab/build/CMakeFiles/metabolism.dir

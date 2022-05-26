@@ -77,7 +77,7 @@ public:
                             , Jacobian& jac_block
                             ) const override;
 private:
-    //vector_t CalculateSmoothConstraintGradientFluxVariables() const;
+    vector_t CalculateSmoothConstraintGradientFluxVariables() const;
     const int n_reactions_;
     const std::string flux_variables_name_;
     const std::string h_variables_name_;

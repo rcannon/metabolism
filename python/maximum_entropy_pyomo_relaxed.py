@@ -150,25 +150,48 @@ def Max_ent_solver(n_ini,y_ini,beta_ini,target_log_vcounts, f_log_counts, S, K,o
     ## Variable metabolites (log)
     ######################
 
+
+
+    print("target met")
+    print(target_log_vcounts[0:10])
+    print()
+
+    print("fixed met")
+    print(FxdM[0:10])
+    print()
+
     Mini_dict = dict(list(zip(VarM_idx,n_ini)))
     m.VarM = pe.Var(VarM_idx,initialize = Mini_dict)
+    print("var metabolites")
+    print(n_ini[0:10])
+    print()
 
     # steady state fluxes
     yini_dict = dict(list(zip(react_idx,y_ini)))
     m.y = pe.Var(react_idx, initialize = yini_dict)
+    print("flux")
+    print(y_ini[0:10])
+    print()
 
     # flux null space representation
     betaini_dict = dict(list(zip(beta_idx,beta_ini)))
     m.beta = pe.Var(beta_idx, initialize = betaini_dict)
+    print("beta")
+    print(beta_ini[0:10])
+    print()
 
     # Steady state condition RHS
     bini_dict = dict(list(zip(react_idx,b_ini)))
     m.b = pe.Var(react_idx, initialize = bini_dict)
+    print("steady state")
+    print(b_ini[0:10])
+    print()
 
     hini_dict = dict(list(zip(react_idx,h_ini)))
     m.h = pe.Var(react_idx, initialize = hini_dict)
-
-    
+    print("h var")
+    print(h_ini[0:10])
+    print()
     
     # Set the Constraints
     #############################
@@ -177,12 +200,19 @@ def Max_ent_solver(n_ini,y_ini,beta_ini,target_log_vcounts, f_log_counts, S, K,o
     def flux_null_rep(m,i):
         return m.y[i]   ==  sum( m.SvN[(i,j)]*m.beta[j]  for j in m.beta_idx )
     m.fxnrep_cns = pe.Constraint(m.react_idx, rule = flux_null_rep)
+    from pyomo.core.expr.numvalue import value
+    print("null space constrint")
+    print(value(flux_null_rep(m, 0)))
+    print()
 
     
 
     def steady_state_metab(m,j):
         return m.b[j]  == sum( m.S[(k,j)]*m.VarM[k] for k in m.VarM_idx ) + sum( m.S[(k,j)]*m.FxdM[k] for k in m.FxdM_idx ) 
     m.ssM_cns = pe.Constraint(m.react_idx, rule = steady_state_metab)
+    print("steady state constrint")
+    print(value(steady_state_metab(m, 0)))
+    print()
 
     
     
@@ -190,11 +220,17 @@ def Max_ent_solver(n_ini,y_ini,beta_ini,target_log_vcounts, f_log_counts, S, K,o
     def num_smooth_cns(m,i):
         return m.h[i] ==(m.y[i]*1e50/(abs(m.y[i])*1e50 + 1e-50))*(pe.log(2) -  pe.log(abs(m.y[i]) + pe.sqrt(m.y[i]**2 + 4 ) )  ) 
     m.nms_cns = pe.Constraint(m.react_idx, rule = num_smooth_cns)
+    print("steady state constrint")
+    print(value(num_smooth_cns(m, 0)))
+    print()
     
     
     # y sign variable
     y_sign_ini_dict = dict(list(zip(react_idx,.5+.5*np.sign(y_ini) )))
     m.u = pe.Var(react_idx,bounds=(0,1),initialize = y_sign_ini_dict)
+    print("u var")
+    print((.5+.5*np.sign(y_ini))[0:10])
+    print()
     
     
     Mb = 1000
@@ -202,22 +238,34 @@ def Max_ent_solver(n_ini,y_ini,beta_ini,target_log_vcounts, f_log_counts, S, K,o
     def relaxed_reg_cns_upper(m,i):
         return ( m.b[i] - pe.log(m.K[i]) ) >= m.h[i] - Mb*(m.u[i])  
     m.rxr_cns_up = pe.Constraint(m.react_idx,rule = relaxed_reg_cns_upper)
+    print("relaxed reg upper constrint")
+    print(value(relaxed_reg_cns_upper(m, 0)))
+    print()
     
     
     def relaxed_reg_cns_lower(m,i):
         return ( m.b[i] - pe.log(m.K[i]) ) <= m.h[i] + Mb*(1 - m.u[i])
     m.rxr_cns_low = pe.Constraint(m.react_idx,rule = relaxed_reg_cns_lower)
+    print("relaxed reg lower constrint")
+    print(value(relaxed_reg_cns_lower(m, 0)))
+    print()
     
     
     
     def sign_constraint(m,i):
         return (pe.log(m.K[i]) - m.b[i])*m.y[i] >= 0
     m.sign_y_cns = pe.Constraint(m.react_idx, rule = sign_constraint)
+    print("sign constrint")
+    print(value(sign_constraint(m, 0)))
+    print()
     
     
     def y_sign_relax(m,i):
         return 2*m.u[i] - 1 == (m.y[i]/(abs(m.y[i]) + 1e-50) ) 
     m.y_sign_relax_cns = pe.Constraint(m.react_idx,rule = y_sign_relax)
+    print("relaxed regulation sign constraint")
+    print(value(y_sign_relax(m, 0)))
+    print()
     
    
     
@@ -225,11 +273,17 @@ def Max_ent_solver(n_ini,y_ini,beta_ini,target_log_vcounts, f_log_counts, S, K,o
     def M_upper_cnstrnts(m,i):
         return  m.VarM[i] <= m.VarM_ubnd[i]
     m.VarM_ub_cns = pe.Constraint(m.VarM_idx,rule = M_upper_cnstrnts)
+    print("variable metabolites upper bounds")
+    print(value(M_upper_cnstrnts(m, 0)))
+    print()
 
 
     def M_lower_cnstrnts(m,i):
         return  m.VarM[i] >= VarM_lbnd
     m.VarM_lb_cns = pe.Constraint(m.VarM_idx,rule = M_lower_cnstrnts)
+    print("variable metabolites lower bounds")
+    print(value(M_lower_cnstrnts(m, 0)))
+    print()
 
     
     
@@ -245,6 +299,16 @@ def Max_ent_solver(n_ini,y_ini,beta_ini,target_log_vcounts, f_log_counts, S, K,o
         ##return sum( (1 - m.y[j]/sum_y)*m.y[j]  for j in m.obj_rxn_idx )
         return sum( m.y[j]  for j in m.obj_rxn_idx )
     m.Obj_fn = pe.Objective(rule = _Obj, sense = pe.maximize) 
+
+    print("obj rxn indxs")
+    print(obj_rxn_idx)
+    print()
+
+    print("cost function")
+    print(value(_Obj(m)))
+    print()
+
+    '''
     
     
 
@@ -313,7 +377,7 @@ def Max_ent_solver(n_ini,y_ini,beta_ini,target_log_vcounts, f_log_counts, S, K,o
     return(b_sol, y_sol, alpha_sol, h_sol, beta_sol, n_sol)
 
 
-
+'''
 
 
 

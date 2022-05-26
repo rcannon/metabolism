@@ -191,7 +191,7 @@ const
         (   std::pow(10, 50) * fluxes.array() / ((std::pow(10, 50) * fluxes.array().abs()) + std::pow(10, -50))
         *   (std::log(2) - Eigen::log( fluxes.array().abs() + Eigen::sqrt(fluxes.array().pow(2) + 4)))
         ).matrix();
-    /*    ( fluxes.array().sign()
+        /*( fluxes.array().sign()
         *   ( std::log(2) 
             - Eigen::log( fluxes.array().abs()
                         + Eigen::sqrt( fluxes.array().pow(2) + 4 )

@@ -32,23 +32,3 @@ find_initial_values
     
     return { beta_init, flux_init, variable_metabolites_init };
 }
-
-vector_t
-read_to_vector(const std::string path)
-{
-    std::ifstream indata;
-    indata.open(path);
-    std::string line;
-    std::vector<value_t> values;
-
-    while (std::getline(indata, line)) {
-        std::stringstream lineStream(line);
-        std::string cell;
-        while (std::getline(lineStream, cell, ',')) {
-            values.push_back(std::stod(cell));
-        }
-    }
-    vector_t res = Eigen::Map<vector_t>(values.data(), values.size(), 1);
-
-    return res;
-}

@@ -33,10 +33,9 @@ main()
     value_t cell_volume = std::pow(10, -15);
     value_t concentration_to_count = n_Avagadro * cell_volume;
     value_t concentration_increment = std::pow(concentration_to_count, -1);
-
-    //double target_val = 6.022140857 * std::pow(10, 5);
     double target_val = std::log( concentration_to_count * std::pow(10, -3) );
     vector_t target_log_variable_metabolites_count = vector_t::Constant(num_variable_metabolites, target_val);
+    
     int Vmax = 1000;
     double s = 0.085;
     double Km = 0.5*s;
@@ -81,35 +80,3 @@ main()
     }
     return 0;
 }
-
-/*
-
-    // set the initial flux_variables
-    vector_t flux_variables = vector_t::Constant(num_reactions, 1.0);
-
-    // set the initial beta_variables
-    vector_t beta_variables = vector_t::Constant(num_reactions, 1.0);
-
-    // run maximum_entropy solver
-    auto results_tuple = maximum_entropy_solver ( variable_metabolites
-                                                , fixed_metabolites 
-                                                , flux_variables
-                                                , beta_variables
-                                                , target_log_variable_metabolites_count
-                                                , stoichiometric_matrix
-                                                , equilibrium_constants
-                                                , objective_reaction_indices
-                                                );
-    std::cout << "here main\n";
-
-    vector_t steady_state_sol = std::get<0>(results_tuple);
-    vector_t flux_sol = std::get<1>(results_tuple);
-    vector_t alpha_sol = std::get<2>(results_tuple);
-    vector_t beta_sol = std::get<3>(results_tuple);
-    vector_t metabolite_sol = std::get<4>(results_tuple);
-
-    std::cout << "optimisation done\n";
-
-    return 0;
-}
-*/

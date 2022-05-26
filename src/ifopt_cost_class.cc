@@ -19,7 +19,7 @@ Cost::GetCost()
 const
 {
     vector_t x = GetVariables()->GetComponent(flux_variables_name_)->GetValues()(objective_reaction_indices_);
-    return -x.sum();
+    return -1.0 * x.sum();
 }
 
 

@@ -156,7 +156,7 @@ read_to_matrix( const std::string& path)
 
 // generic read vector from csv
 vector_t
-read_to_vector(const std::string path)
+read_to_vector(const std::string& path)
 {
     std::ifstream indata;
     indata.open(path);

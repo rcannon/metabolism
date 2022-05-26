@@ -8,7 +8,7 @@ std::tuple<vector_t, vector_t, vector_t, vector_t, vector_t, vector_t>
 maximum_entropy_solver
     ( const vector_t& variable_metabolites_init // aka n
     , const vector_t& fixed_metabolites
-    , const vector_t& old_flux_variables_init // aka y
+    , const vector_t& flux_variables_init // aka y
     , const vector_t& beta_init // \beta
     , const vector_t& target_log_variable_metabolites_counts
     , const matrix_t& stoich_matrix
@@ -46,12 +46,15 @@ maximum_entropy_solver
 
     matrix_t stoich_matrix_variable_metab_section = stoich_matrix_variable_metab_section_T.transpose();
     matrix_t stoich_matrix_fixed_metab_section = stoich_matrix_fixed_metab_section_T.transpose();
+
     // find a basis for the nullspace of S_v,
     // and get the dimension of the null space 
     Eigen::JacobiSVD<matrix_t> svd(stoich_matrix_variable_metab_section, Eigen::ComputeFullV);
     int rnk = svd.rank();
     matrix_t null_space_stoich_matrix_variable_metab_section 
         = svd.matrixV()(Eigen::seq(rnk, Eigen::last), Eigen::all).transpose().conjugate();
+    
+    //matrix_t null_space_stoich_matrix_variable_metab_section = read_to_matrix("../data/python_feasible_point/null_space_matrix.csv");
     size_t dim_null_space = null_space_stoich_matrix_variable_metab_section.cols();
     
 
@@ -70,6 +73,18 @@ maximum_entropy_solver
     // add variables classes
     bool is_u_variables;
 
+    std::cout << "\ntarget metabolites " << std::endl;
+    for (int i = 0; i < 10; i++   ) {
+        std::cout << target_log_variable_metabolites_counts(i) << " ";
+    }
+    std::cout << std::endl;
+
+    std::cout << "\nfixed_metabolites " << std::endl;
+    for (int i = 0; i < 10; i++   ) {
+        std::cout << fixed_metabolites(i) << " ";
+    }
+    std::cout << std::endl;
+
     // add metabolite variables
     is_u_variables = false;
     std::string variable_metabolites_variables_name = "log_variable_metabolites";
@@ -78,6 +93,11 @@ maximum_entropy_solver
                                                     , is_u_variables
                                                     , variable_metabolites_init
                                                     ));
+    std::cout << "\nvariable_metabolites " << std::endl;
+    for (int i = 0; i < 10; i++   ) {
+        std::cout << variable_metabolites_init(i) << " ";
+    }
+    std::cout << std::endl;
 
 
     // add beta variables
@@ -90,17 +110,27 @@ maximum_entropy_solver
                                                     , is_u_variables
                                                     , beta_variables_for_use
                                                     ));
+    std::cout << "\nbeta " << std::endl;
+    for (int i = 0; i < 10; i++   ) {
+        std::cout << beta_variables_for_use(i) << " ";
+    }
+    std::cout << std::endl;
 
     // add flux variables (aka y)
     std::string flux_variables_name = "flux_variables";
     size_t num_flux_variables = n_reactions;
     is_u_variables = false;
-    vector_t flux_variables_init = null_space_stoich_matrix_variable_metab_section * beta_variables_for_use;
+    //vector_t flux_variables_init = null_space_stoich_matrix_variable_metab_section * beta_variables_for_use;
     nlp.AddVariableSet(std::make_shared<Variables>  ( flux_variables_name
                                                     , num_flux_variables
                                                     , is_u_variables
                                                     , flux_variables_init
                                                     ));
+    std::cout << "\nflux " << std::endl;
+    for (int i = 0; i < 10; i++   ) {
+        std::cout << flux_variables_init(i) << " ";
+    }
+    std::cout << std::endl;
 
     // add steady state variables (aka g in paper, b in python version)
     std::string steady_state_variables_name = "steady_state_variables";
@@ -114,6 +144,11 @@ maximum_entropy_solver
                                                     , is_u_variables
                                                     , steady_state_vars_init
                                                     ));
+    std::cout << "\nsteady state " << std::endl;
+    for (int i = 0; i < 10; i++   ) {
+        std::cout << steady_state_vars_init(i) << " ";
+    }
+    std::cout << std::endl;
 
     /*std::cout << "\nvariables" << std::endl;
     for ( auto row : stoich_matrix_fixed_metab_section_T.rowwise()) {
@@ -148,6 +183,11 @@ maximum_entropy_solver
                                                     , is_u_variables
                                                     , h_init
                                                     ));
+    std::cout << "\nh vars " << std::endl;
+    for (int i = 0; i < 10; i++   ) {
+        std::cout << h_init(i) << " ";
+    }
+    std::cout << std::endl;
 
     // add u variables
     std::string u_variable_name = "u_variables";
@@ -162,6 +202,11 @@ maximum_entropy_solver
                                                     , is_u_variables
                                                     , u_init
                                                     ));
+    std::cout << "\nu vars " << std::endl;
+    for (int i = 0; i < 10; i++   ) {
+        std::cout << u_init(i) << " ";
+    }
+    std::cout << std::endl;
 
     //
     // add cost function_class
@@ -171,6 +216,11 @@ maximum_entropy_solver
                                             , flux_variables_name
                                             , objective_reaction_indices
                                             ));
+    std::cout << "\nobjective reaction indices " << std::endl;
+    for (int i = 0; i < 3; i++   ) {
+        std::cout << objective_reaction_indices.at(i) << " ";
+    }
+    std::cout << std::endl;
     
     //
     // add constraint classes
@@ -245,9 +295,9 @@ maximum_entropy_solver
         ));
 
     // maximum entropy problem formulation 100
-    std::string relaxed_flux_sign_constraint_class_name = "relaxed_flux_sign_constraints";
+    std::string relaxed_regulation_sign_constraint_class_name = "relaxed_regulation_sign_constraints";
     nlp.AddConstraintSet(std::make_shared<RelaxedRegulationSignConstraint>  
-        ( relaxed_flux_sign_constraint_class_name
+        ( relaxed_regulation_sign_constraint_class_name
         , n_reactions
         , flux_variables_name
         , u_variable_name
@@ -283,8 +333,8 @@ maximum_entropy_solver
     ipopt.SetOption("linear_solver", "mumps");
     //ipopt.SetOption("jacobian_approximation", "exact"); // keep this because we specified jacobians
     ipopt.SetOption("jacobian_approximation", "finite-difference-values"); 
-    ipopt.SetOption("max_cpu_time", 300.0);
-    //ipopt.SetOption("max_iter", 10000);
+    ipopt.SetOption("max_cpu_time", 800000.0);
+    ipopt.SetOption("max_iter", 10000);
     //ipopt.SetOption("print_level", 7);
     //ipopt.SetOption("tol", 0.00001)
 

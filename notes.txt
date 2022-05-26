@@ -1,4 +1,11 @@
 
+Meeting
+    - compute beta, not fluxes
+    - plug in c++ result to python to check
+    - run smooth constraint with true sgn but with approx derivatives
+    - set big M value to be 50
+    - change y sign relax constraint to python version
+
 TODO:
     - remove all instances of auto
         - see: https://stackoverflow.com/questions/29231798/eigen-how-to-make-a-deep-copy-of-a-matrix
@@ -6,12 +13,14 @@ TODO:
     - move metabolite lower upper bounds to variables
 
 
-Ideas (in order of subjective likelihood of success)
+Ideas 
 ----------------------------------------------------
     - try with other smooth constraint
     - try reading in null_space matrix
         - make sure flux vars are close to zero
     - check constraints again
+        - test with small inputs and print out
+    - flip const class sign
     - run eigen and ifopt in production mode
     - better solver: HSL ma57
         - https://www.hsl.rl.ac.uk/download/coinhsl/2021.05.05/
