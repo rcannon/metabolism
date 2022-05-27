@@ -45,6 +45,11 @@ def initialize(v_log_counts,f_log_counts,target_log_vcounts, S, K):
   h_ini = np.reshape(hi_sol,(len(hi_sol),) )
 
   # save for c++
+  print()
+  print()
+  print("saving for c++")
+  print()
+  print()
   path = "../data/python_feasible_point/"
   np.savetxt(path + "variable_metabolites_log_counts.csv",n_ini, delimiter=',')
   np.savetxt(path + "flux_variables.csv", y_ini, delimiter=',')

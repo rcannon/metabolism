@@ -36,6 +36,7 @@ target_sources(run PRIVATE
         ${PROJECT_SOURCE_DIR}/src/read_data_files.cc
         ${PROJECT_SOURCE_DIR}/src/metabolism.cc
         ${PROJECT_SOURCE_DIR}/src/find_initial_values.cc
+        ${PROJECT_SOURCE_DIR}/src/write_vector_to_csv.cc
 )
 
 #target_sources(test PRIVATE 

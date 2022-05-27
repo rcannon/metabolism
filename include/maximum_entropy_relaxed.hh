@@ -8,6 +8,7 @@
 #include "ifopt_constraint_classes.hh"
 #include "ifopt_cost_class.hh"
 #include "read_data_files.hh"
+#include "write_vector_to_csv.hh"
 
 #pragma once
 

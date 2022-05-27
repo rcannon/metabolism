@@ -188,16 +188,13 @@ const
 {
     const vector_t fluxes = GetVariables()->GetComponent(flux_variables_name_)->GetValues();
     const vector_t coeff = 
-        (   std::pow(10, 50) * fluxes.array() / ((std::pow(10, 50) * fluxes.array().abs()) + std::pow(10, -50))
-        *   (std::log(2) - Eigen::log( fluxes.array().abs() + Eigen::sqrt(fluxes.array().pow(2) + 4)))
-        ).matrix();
-        /*( fluxes.array().sign()
+        ( fluxes.array().sign()
         *   ( std::log(2) 
             - Eigen::log( fluxes.array().abs()
                         + Eigen::sqrt( fluxes.array().pow(2) + 4 )
                         ) 
             )
-        ).matrix();*/
+        ).matrix();
     const vector_t h_variables = GetVariables()->GetComponent(h_variables_name_)->GetValues();
     const vector_t result = coeff - h_variables;
 
@@ -219,8 +216,7 @@ SmoothConstraint::FillJacobianBlock
     ( std::string var_set
     , Jacobian& jac_block
     )
-const {}
-/*
+const
 {
     int row_end = n_reactions_;
 
@@ -242,12 +238,16 @@ const {}
 vector_t
 SmoothConstraint::CalculateSmoothConstraintGradientFluxVariables()
 const
-{   
-    const vector_t flux_squared = GetVariables()->GetComponent(flux_variables_name_)->GetValues().array().pow(2).matrix();
-    const vector_t result = (flux_squared.array() + 4).sqrt().inverse().matrix();
-    // maybe -1 *
+{ 
+    const vector_t fluxes = GetVariables()->GetComponent(flux_variables_name_)->GetValues().array().matrix();
+    
+    const vector_t result = 
+        (
+            -1.0 / (fluxes.array().pow(2) + 4).sqrt()
+        ).matrix();
+
     return result;
-}*/
+}
 
 //
 // End SmoothConstraint
@@ -537,7 +537,10 @@ const
     // Maximum Entropy Production Problem Formulation 100
 
     const vector_t fluxes = GetVariables()->GetComponent(flux_variables_name_)->GetValues();
-    const vector_t sign_fluxes = fluxes.array().sign().matrix();
+    const vector_t sign_fluxes = 
+        (
+            fluxes.array() / (fluxes.array().abs() + std::pow(10, -50))
+        ).matrix();
     const vector_t u_variables = GetVariables()->GetComponent(u_variables_name_)->GetValues();
 
     const vector_t result = 
@@ -568,10 +571,14 @@ const
     
     int row_end = n_reactions_;
 
+    const vector_t fluxes = GetVariables()->GetComponent(flux_variables_name_)->GetValues();
+    const vector_t gradient = 
+        (
+            (-1.0 * std::pow(10, -50)) / (fluxes.array().abs() + std::pow(10, -50)).pow(2)
+        ).matrix();
     if (var_set == flux_variables_name_){
-        // see MEPPF, thrid bullet point above (92)
         for (int diag =0; diag < row_end; diag++) {
-            jac_block.coeffRef(diag, diag) = 0.0;
+            jac_block.coeffRef(diag, diag) = gradient(diag);
         }
     }
     else if (var_set == u_variables_name_){

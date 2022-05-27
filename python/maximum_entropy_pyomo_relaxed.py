@@ -21,6 +21,7 @@ from pyomo.opt import TerminationCondition
 
 def Max_ent_solver(n_ini,y_ini,beta_ini,target_log_vcounts, f_log_counts, S, K,obj_rxn_idx):
 
+
   # Flip Stoichiometric Matrix
     S_T = S    # S_T is the Stoich matrix with rows as reactions, columns as metabolites
     S = np.transpose(S) # this now is the Stoich matrix with rows metabolites, and columns reactions
@@ -52,8 +53,9 @@ def Max_ent_solver(n_ini,y_ini,beta_ini,target_log_vcounts, f_log_counts, S, K,o
     S_f = np.transpose(S_f_T)
 
     #find a basis for the nullspace of S_v
-    Sv_N = spL.null_space(S_v)
-    np.savetxt("../data/python_feasible_point/null_space_matrix.csv",Sv_N, delimiter=',')
+    #Sv_N = spL.null_space(S_v)
+    Sv_N = np.genfromtxt("../data/python_feasible_point/null_space_matrix.csv", delimiter=',')
+    #np.savetxt("../data/python_feasible_point/null_space_matrix.csv",Sv_N, delimiter=',')
     dSv_N = np.shape(Sv_N)[1] # the dimension of the nullspace
 
     # Steady State satisfies the following least squares problem
@@ -81,6 +83,8 @@ def Max_ent_solver(n_ini,y_ini,beta_ini,target_log_vcounts, f_log_counts, S, K,o
     b_ini = np.reshape(b_ini,len(b_ini))
    
     h_ini = np.sign(y_ini)*( np.log(2) - np.log( np.abs(y_ini) + np.sqrt( np.power(y_ini,2) + 4 ) )  )
+
+    u_ini = .5+.5*np.sign(y_ini)
 
     ## Set the optimization parameters
     VarM_lbnd = -300 #lower bound on the log metabolite counts
@@ -150,6 +154,14 @@ def Max_ent_solver(n_ini,y_ini,beta_ini,target_log_vcounts, f_log_counts, S, K,o
     ## Variable metabolites (log)
     ######################
 
+    path = "../data/cpp_out/"
+    n_ini = np.genfromtxt(path + "variable_metabolites.csv", delimiter=',')
+    y_ini = np.genfromtxt(path + "fluxes.csv", delimiter=',')
+    beta_ini = np.genfromtxt(path + "beta.csv", delimiter=',')
+    b_ini = np.genfromtxt(path + "steady_state.csv", delimiter=',')
+    h_ini = np.genfromtxt(path + "h_vars.csv", delimiter=',')
+    u_ini = np.genfromtxt(path + "u_vars.csv", delimiter=',')
+    u_ini = np.ceil(u_ini)
 
 
     print("target met")
@@ -192,15 +204,25 @@ def Max_ent_solver(n_ini,y_ini,beta_ini,target_log_vcounts, f_log_counts, S, K,o
     print("h var")
     print(h_ini[0:10])
     print()
+
+    # y sign variable
+    y_sign_ini_dict = dict(list(zip(react_idx,u_ini )))
+    m.u = pe.Var(react_idx,bounds=(0,1),initialize = y_sign_ini_dict)
+    print("u var")
+    print((.5+.5*np.sign(y_ini))[0:10])
+    print()
     
     # Set the Constraints
     #############################
+    from pyomo.core.expr.numvalue import value
 
     #flux null space representation constraint
     def flux_null_rep(m,i):
-        return m.y[i]   ==  sum( m.SvN[(i,j)]*m.beta[j]  for j in m.beta_idx )
+        x = sum( m.SvN[(i,j)]*m.beta[j]  for j in m.beta_idx )
+        print(value(x))
+        return m.y[i]   ==  x
     m.fxnrep_cns = pe.Constraint(m.react_idx, rule = flux_null_rep)
-    from pyomo.core.expr.numvalue import value
+
     print("null space constrint")
     print(value(flux_null_rep(m, 0)))
     print()
@@ -220,20 +242,13 @@ def Max_ent_solver(n_ini,y_ini,beta_ini,target_log_vcounts, f_log_counts, S, K,o
     def num_smooth_cns(m,i):
         return m.h[i] ==(m.y[i]*1e50/(abs(m.y[i])*1e50 + 1e-50))*(pe.log(2) -  pe.log(abs(m.y[i]) + pe.sqrt(m.y[i]**2 + 4 ) )  ) 
     m.nms_cns = pe.Constraint(m.react_idx, rule = num_smooth_cns)
-    print("steady state constrint")
+    print("smooth constrint")
     print(value(num_smooth_cns(m, 0)))
     print()
     
     
-    # y sign variable
-    y_sign_ini_dict = dict(list(zip(react_idx,.5+.5*np.sign(y_ini) )))
-    m.u = pe.Var(react_idx,bounds=(0,1),initialize = y_sign_ini_dict)
-    print("u var")
-    print((.5+.5*np.sign(y_ini))[0:10])
-    print()
     
-    
-    Mb = 1000
+    Mb = 50
     
     def relaxed_reg_cns_upper(m,i):
         return ( m.b[i] - pe.log(m.K[i]) ) >= m.h[i] - Mb*(m.u[i])  
@@ -308,7 +323,6 @@ def Max_ent_solver(n_ini,y_ini,beta_ini,target_log_vcounts, f_log_counts, S, K,o
     print(value(_Obj(m)))
     print()
 
-    '''
     
     
 
@@ -377,7 +391,6 @@ def Max_ent_solver(n_ini,y_ini,beta_ini,target_log_vcounts, f_log_counts, S, K,o
     return(b_sol, y_sol, alpha_sol, h_sol, beta_sol, n_sol)
 
 
-'''
 
 
 

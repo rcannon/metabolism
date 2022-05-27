@@ -714,7 +714,7 @@ def Random_Feasible_Point_solver(v_log_counts, target_log_vcounts, f_log_counts,
     
     
     
-    Mb = 1000   #big M relaxation parameter
+    Mb = 50   #big M relaxation parameter
     
     def relaxed_reg_cns_upper(m,i):
         return ( m.b[i] - pe.log(m.K[i]) ) >= m.h[i] - Mb*(m.u[i])  

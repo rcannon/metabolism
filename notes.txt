@@ -4,6 +4,8 @@ Meeting
     - plug in c++ result to python to check
     - run smooth constraint with true sgn but with approx derivatives
     - set big M value to be 50
+        - note: the makes some of the relaxed regualtion upper bounds infeasible
+            - 200 seems to be about lowest possible
     - change y sign relax constraint to python version
 
 TODO:
