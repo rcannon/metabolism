@@ -6,7 +6,8 @@ module load cmake/3.21.4
 module load python/miniconda3.9
 source /share/apps/python/miniconda3.9/etc/profile.d/conda.sh
 
+export PROJECT_DIR=$(pwd)
+
 # activate the local conda environment located in 
 # metab/python/anaconda
-export PROJECT_DIR=$(pwd)
-conda activate $PROJECT_DIR/python/anaconda
+#conda activate $PROJECT_DIR/python/anaconda
