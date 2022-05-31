@@ -386,6 +386,9 @@ def Max_ent_solver(n_ini,y_ini,beta_ini,target_log_vcounts, f_log_counts, S, K,o
     alpha_sol = y_sol/unreg_rxn_flux
     alpha_sol = np.ravel(alpha_sol)
 
+    print()
+    print("sol ", b_sol[32])
+    print("ini ", b_ini[32])
     
 
     return(b_sol, y_sol, alpha_sol, h_sol, beta_sol, n_sol)

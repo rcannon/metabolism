@@ -68,7 +68,7 @@ def metabolism_driver():
                          # not on whether V = Vmax*s/(Km + s) is significantly different.
     if ((nutrient_ratio > 1.05) or (nutrient_ratio < 0.95)):
       #call detailed metabolism
-      rxn_flux, v_log_counts = metabolism.run(v_log_counts,f_log_counts,target_log_vcounts, S, K,iuptake, Vmax, Km, s, obj_rxn_idx)
+      #rxn_flux, v_log_counts = metabolism.run(v_log_counts,f_log_counts,target_log_vcounts, S, K,iuptake, Vmax, Km, s, obj_rxn_idx)
       nutrient_ratio = 1
 
     scaled_flux2 = metabolism.scale_flux(rxn_flux,iuptake, Vmax, Km, s)

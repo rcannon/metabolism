@@ -24,8 +24,8 @@ public:
                             ) const override;
 private:
     const int n_reactions_;
-    const std::string beta_variables_name_;
     const std::string flux_variables_name_;
+    const std::string beta_variables_name_;
     const matrix_t null_space_matrix_;
     const int dim_null_space_;
 };

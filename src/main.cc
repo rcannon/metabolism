@@ -17,8 +17,8 @@ main()
 
     // read the equilibrium constant data from the file
     auto equlibrium_constants_tuple = load_equilibrium_constants("../data/EquilibriumConstants.csv");
-    int num_uptake = std::get<0>(equlibrium_constants_tuple);
-    int num_output = std::get<1>(equlibrium_constants_tuple);
+    //int num_uptake = std::get<0>(equlibrium_constants_tuple);
+    //int num_output = std::get<1>(equlibrium_constants_tuple);
     std::vector<int> objective_reaction_indices = std::get<2>(equlibrium_constants_tuple);
     vector_t equilibrium_constants = std::get<3>(equlibrium_constants_tuple);
 
@@ -26,13 +26,13 @@ main()
     // read the stochiometric matrix from the file
     matrix_t stoichiometric_matrix = read_to_matrix("../data/StoichiometricMatrix.csv");
 
-    int num_reactions = stoichiometric_matrix.rows();
+    //int num_reactions = stoichiometric_matrix.rows();
 
     // get the target log counts for the variable metabolites
     value_t n_Avagadro = 6.022140857 * std::pow(10,23);
     value_t cell_volume = std::pow(10, -15);
     value_t concentration_to_count = n_Avagadro * cell_volume;
-    value_t concentration_increment = std::pow(concentration_to_count, -1);
+    //value_t concentration_increment = std::pow(concentration_to_count, -1);
     double target_val = std::log( concentration_to_count * std::pow(10, -3) );
     vector_t target_log_variable_metabolites_count = vector_t::Constant(num_variable_metabolites, target_val);
     
@@ -40,7 +40,7 @@ main()
     double s = 0.085;
     double Km = 0.5*s;
     int iuptake = 32;
-    int ioutput = 32;
+    //int ioutput = 32;
     auto run_results = run_metabolism
         ( variable_metabolites
         , fixed_metabolites

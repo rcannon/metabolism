@@ -279,15 +279,12 @@ maximum_entropy_solver
     // initialize solver
     ifopt::IpoptSolver ipopt;
     ipopt.SetOption("linear_solver", "mumps");
-    ipopt.SetOption("jacobian_approximation", "exact"); // keep this because we specified jacobians
+    ipopt.SetOption("jacobian_approximation", "exact"); // keep this because we specified jacobian
     ipopt.SetOption("max_cpu_time", 800000.0);
     ipopt.SetOption("max_iter", 10000);
-    /*
-        other options that might be useful
+    //ipopt.SetOption("tol", 0.000001);
+    //ipopt.SetOption("acceptable_tol", 0.00001);
 
-    ipopt.SetOption("print_level", 7);
-    ipopt.SetOption("tol", 0.00001)
-    */
 
     // solve the problem
     ipopt.Solve(nlp);

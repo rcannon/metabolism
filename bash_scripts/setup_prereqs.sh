@@ -13,7 +13,7 @@ rm -rf build
 mkdir build
 cd build
 #cmake -DCMAKE_CXX_FLAGS="-std=c++17 " -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=$(pwd)/../../PREREQS_INSTALL ..
-cmake -DCMAKE_CXX_FLAGS="-std=c++17 " -DCMAKE_INSTALL_PREFIX=$(pwd)/../../PREREQS_INSTALL ..
+cmake -DCMAKE_CXX_FLAGS="-std=c++17 " -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/../../PREREQS_INSTALL ..
 make
 make install 
 cd ../..

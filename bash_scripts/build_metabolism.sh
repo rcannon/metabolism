@@ -8,5 +8,5 @@ cd $PROJECT_DIR
 
 mkdir build
 cd build
-cmake ..
+cmake .. -DCMAKE_BUILD_TYPE=Release
 make
