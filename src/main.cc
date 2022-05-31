@@ -61,7 +61,7 @@ main()
         nutrient_ratio = nutrient_ratio * (s_new/s);
 
         if ((nutrient_ratio > 1.05) || (nutrient_ratio < 0.95)){
-            /*auto run_results = run_metabolism
+            auto run_results = run_metabolism
                 ( variable_metabolites
                 , fixed_metabolites
                 , target_log_variable_metabolites_count
@@ -70,7 +70,7 @@ main()
                 , objective_reaction_indices
                 );
             vector_t reaction_flux = std::get<0>(run_results);
-            variable_metabolites = std::get<1>(run_results);*/
+            variable_metabolites = std::get<1>(run_results);
 
             nutrient_ratio = 1;
         }

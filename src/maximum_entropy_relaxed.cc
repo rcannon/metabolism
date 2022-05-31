@@ -27,18 +27,15 @@ maximum_entropy_solver
     double variable_metabolite_lower_bound = -300;
     double big_M_value = 50;
 
-    matrix_t stoichiometric_matrix = stoich_matrix; // copying because bad practive but easy, also see line 314
+    matrix_t stoichiometric_matrix = stoich_matrix; // copying because bad practice but easy, also see first line in reaction_flux def (below).
     
     // Stoichiometric Matrix - rows are reactions, cols are metabolites
-    matrix_t stoichiometric_matrix_T = stoichiometric_matrix; // this should do deep copy 
+    matrix_t stoichiometric_matrix_T = stoichiometric_matrix; // deep copy
     stoichiometric_matrix.transposeInPlace(); // now rows are metabolites, cols are reactions
-    size_t n_reactions = stoichiometric_matrix.cols(); // should be same as numpy.shape(S)[1]
+    size_t n_reactions = stoichiometric_matrix.cols();
 
     // Split S into the component corresponding to the variable metabolites S_v
     // and the component corresponding to the fixed metabolites. 
-        // Reilly: below should do the same thing as numpy.delete
-        // https://eigen.tuxfamily.org/dox-devel/group__TutorialSlicingIndexing.html
-
     matrix_t stoich_matrix_variable_metab_section_T 
         = stoichiometric_matrix_T(Eigen::all, Eigen::seq(0, num_variable_metabolites-1));
     matrix_t stoich_matrix_fixed_metab_section_T 
@@ -47,9 +44,11 @@ maximum_entropy_solver
     matrix_t stoich_matrix_variable_metab_section = stoich_matrix_variable_metab_section_T.transpose();
     matrix_t stoich_matrix_fixed_metab_section = stoich_matrix_fixed_metab_section_T.transpose();
 
-    // find a basis for the nullspace of S_v,
-    // and get the dimension of the null space 
-    /*Eigen::JacobiSVD<matrix_t> svd(stoich_matrix_variable_metab_section, Eigen::ComputeFullV);
+    /*  
+        Find a basis for the nullspace of S_v, and get the dimension of the null space. 
+        Note: for now just read in from file (see next line of uncommented code)
+
+    Eigen::JacobiSVD<matrix_t> svd(stoich_matrix_variable_metab_section, Eigen::ComputeFullV);
     int rnk = svd.rank();
     matrix_t null_space_stoich_matrix_variable_metab_section 
         = svd.matrixV()(Eigen::seq(rnk, Eigen::last), Eigen::all).transpose().conjugate();
@@ -58,11 +57,17 @@ maximum_entropy_solver
     size_t dim_null_space = null_space_stoich_matrix_variable_metab_section.cols();
     
 
-    // precompute SVS
+    /*  
+        Precompute SVS
+
+        Note: this is not actually used at all in the python version,
+        so we'll just leave it out for now.
+
     matrix_t svs_matrix =   ( stoich_matrix_variable_metab_section 
                             * stoich_matrix_variable_metab_section_T
                             ).inverse() 
                             * stoich_matrix_variable_metab_section;
+    */
 
     //
     // initialize the ifopt problem
@@ -70,20 +75,14 @@ maximum_entropy_solver
 
     ifopt::Problem nlp;
 
+    //
     // add variables classes
-    bool is_u_variables;
+    //
 
-    std::cout << "\ntarget metabolites " << std::endl;
-    for (int i = 0; i < 10; i++   ) {
-        std::cout << target_log_variable_metabolites_counts(i) << " ";
-    }
-    std::cout << std::endl;
-
-    std::cout << "\nfixed_metabolites " << std::endl;
-    for (int i = 0; i < 10; i++   ) {
-        std::cout << fixed_metabolites(i) << " ";
-    }
-    std::cout << std::endl;
+    // We are using a single variable class, so 
+    // wee pass this to indicate if the variables should be
+    // bounded in (0,1).
+    bool is_u_variables; 
 
     // add metabolite variables
     is_u_variables = false;
@@ -93,12 +92,6 @@ maximum_entropy_solver
                                                     , is_u_variables
                                                     , variable_metabolites_init
                                                     ));
-    std::cout << "\nvariable_metabolites " << std::endl;
-    for (int i = 0; i < 10; i++   ) {
-        std::cout << variable_metabolites_init(i) << " ";
-    }
-    std::cout << std::endl;
-
 
     // add beta variables
     std::string beta_variables_name = "beta_variables";
@@ -110,27 +103,16 @@ maximum_entropy_solver
                                                     , is_u_variables
                                                     , beta_variables_for_use
                                                     ));
-    std::cout << "\nbeta " << std::endl;
-    for (int i = 0; i < 10; i++   ) {
-        std::cout << beta_variables_for_use(i) << " ";
-    }
-    std::cout << std::endl;
 
     // add flux variables (aka y)
     std::string flux_variables_name = "flux_variables";
     size_t num_flux_variables = n_reactions;
     is_u_variables = false;
-    //vector_t flux_variables_init = null_space_stoich_matrix_variable_metab_section * beta_variables_for_use;
     nlp.AddVariableSet(std::make_shared<Variables>  ( flux_variables_name
                                                     , num_flux_variables
                                                     , is_u_variables
                                                     , flux_variables_init
                                                     ));
-    std::cout << "\nflux " << std::endl;
-    for (int i = 0; i < 10; i++   ) {
-        std::cout << flux_variables_init(i) << " ";
-    }
-    std::cout << std::endl;
 
     // add steady state variables (aka g in paper, b in python version)
     std::string steady_state_variables_name = "steady_state_variables";
@@ -144,23 +126,6 @@ maximum_entropy_solver
                                                     , is_u_variables
                                                     , steady_state_vars_init
                                                     ));
-    std::cout << "\nsteady state " << std::endl;
-    for (int i = 0; i < 10; i++   ) {
-        std::cout << steady_state_vars_init(i) << " ";
-    }
-    std::cout << std::endl;
-
-    /*std::cout << "\nvariables" << std::endl;
-    for ( auto row : stoich_matrix_fixed_metab_section_T.rowwise()) {
-        for (auto elem : row) {
-            std::cout << elem << "\n";
-        }
-        std::cout << "\n" << std::endl;
-    }*/
-    /*    std::cout << "\nvariables" << std::endl;
-    for (auto elem : flux_variables_init_signs) {
-        std::cout << elem << std::endl;
-    }*/
 
     // add h variables
     std::string h_variables_name = "h_variables";
@@ -169,25 +134,18 @@ maximum_entropy_solver
     vector_t h_init = 
         (   flux_variables_init_signs.array()
         *   (   std::log(2) 
-            -   Eigen::log  (   fvia.array().abs()
+            -   Eigen::log  ( fvia.array().abs()
                             + Eigen::sqrt(fvia.array().pow(2) + 4)  
                             )
             )
         ).matrix();
     size_t num_h_variables = n_reactions;
     is_u_variables = false;
-    //std::cout << "\nmax ent h " << h_init(0) << std::endl;
-    //std::cout << "\nmax ent flux " << flux_variables_init(0) << std::endl;
     nlp.AddVariableSet(std::make_shared<Variables>  ( h_variables_name
                                                     , num_h_variables
                                                     , is_u_variables
                                                     , h_init
                                                     ));
-    std::cout << "\nh vars " << std::endl;
-    for (int i = 0; i < 10; i++   ) {
-        std::cout << h_init(i) << " ";
-    }
-    std::cout << std::endl;
 
     // add u variables
     std::string u_variable_name = "u_variables";
@@ -202,25 +160,15 @@ maximum_entropy_solver
                                                     , is_u_variables
                                                     , u_init
                                                     ));
-    std::cout << "\nu vars " << std::endl;
-    for (int i = 0; i < 10; i++   ) {
-        std::cout << u_init(i) << " ";
-    }
-    std::cout << std::endl;
 
     //
-    // add cost function_class
+    // add cost function class
     //
     std::string cost_class_name = "metab_cost";
     nlp.AddCostSet(std::make_shared<Cost>   ( cost_class_name
                                             , flux_variables_name
                                             , objective_reaction_indices
                                             ));
-    std::cout << "\nobjective reaction indices " << std::endl;
-    for (int i = 0; i < 3; i++   ) {
-        std::cout << objective_reaction_indices.at(i) << " ";
-    }
-    std::cout << std::endl;
     
     //
     // add constraint classes
@@ -332,22 +280,20 @@ maximum_entropy_solver
     ifopt::IpoptSolver ipopt;
     ipopt.SetOption("linear_solver", "mumps");
     ipopt.SetOption("jacobian_approximation", "exact"); // keep this because we specified jacobians
-    //ipopt.SetOption("jacobian_approximation", "finite-difference-values"); 
     ipopt.SetOption("max_cpu_time", 800000.0);
     ipopt.SetOption("max_iter", 10000);
-    //ipopt.SetOption("print_level", 7);
-    //ipopt.SetOption("tol", 0.00001)
+    /*
+        other options that might be useful
+
+    ipopt.SetOption("print_level", 7);
+    ipopt.SetOption("tol", 0.00001)
+    */
 
     // solve the problem
     ipopt.Solve(nlp);
     nlp.PrintCurrent();
 
-    std::cout
-        << "\n\n\n null space " 
-        << nlp.GetConstraints().GetComponent(null_space_constraint_class_name)->GetValues()(0)
-        << std::endl;
-
-    // get the found variable solutions
+    // get the variable solutions
     vector_t metabolites_sol = nlp.GetOptVariables()->GetComponent(variable_metabolites_variables_name)->GetValues();
     vector_t flux_sol = nlp.GetOptVariables()->GetComponent(flux_variables_name)->GetValues();
     vector_t steady_state_sol = nlp.GetOptVariables()->GetComponent(steady_state_variables_name)->GetValues();
@@ -355,16 +301,8 @@ maximum_entropy_solver
     vector_t h_sol = nlp.GetOptVariables()->GetComponent(h_variables_name)->GetValues();
     vector_t u_sol = nlp.GetOptVariables()->GetComponent(u_variable_name)->GetValues();
 
-    double x = (null_space_stoich_matrix_variable_metab_section * beta_sol)(0);
-    std::cout 
-        << "\n\n\n test"
-        << x
-        << std::endl;
-
-    std::cout 
-        << "\n\n\n test flux sol"
-        << flux_sol(0)
-        << std::endl;
+    
+    //    save results to csv
 
     write_vector_to_csv(metabolites_sol, "../data/cpp_out/variable_metabolites.csv");
     write_vector_to_csv(flux_sol, "../data/cpp_out/fluxes.csv");
@@ -372,6 +310,7 @@ maximum_entropy_solver
     write_vector_to_csv(beta_sol, "../data/cpp_out/beta.csv");
     write_vector_to_csv(h_sol, "../data/cpp_out/h_vars.csv");
     write_vector_to_csv(u_sol, "../data/cpp_out/u_vars.csv");
+    
 
     vector_t E_regulation = vector_t::Constant(flux_sol.size(), 1.0);
     vector_t unreq_rxn_flux = reaction_flux ( metabolites_sol
