@@ -38,7 +38,6 @@ load_concentrations( const std::string& path)
 
     vector_t res_vector;
     size_t num_variable;
-    size_t num_total;
     size_t rows = 0;
 
     // read numvar
@@ -47,6 +46,7 @@ load_concentrations( const std::string& path)
 
     // read numtot
     std::getline(indata, line);
+    //size_t num_total;
     //num_total = std::stoi(line);
 
     // read concentrations vector

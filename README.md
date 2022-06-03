@@ -8,7 +8,8 @@
 
 ## Installation and Running
 
-From the top-level directory in deception or marianas:
+This project is intended to run on Deception/Marianas.
+From the top-level project directory, run:
 ```
 $ source env.sh
 $ bash_scripts/setup_prereqs.sh
@@ -16,6 +17,8 @@ $ bash_scripts/build_metabolism.sh
 $ cd build
 $ ./run
 ```
+
+The problem variable solutions are written to `data/cpp_out/<variable_name>.csv`.
 
 ## Cleaning
 
@@ -36,7 +39,7 @@ the project (see the section on [Installing and Running](#installation-and-runni
 
 ## Notes
 
-1. When running the solver, IFOPT will probably say that
+1. When running the solver, IFOPT will probably (initially) say that
 3 of the relaxed_regulation_upper_constraints are violated.
 This can be fixed by increasing `Mb` (aka `big_M_value` in `maximum_entropy_relaxed.cc`)
 to at least 200 (it is currently set to 50). However, in my experience it is not necessary
