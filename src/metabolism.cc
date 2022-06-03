@@ -14,11 +14,7 @@ initialize
     // modify me for better initialization
     //
     auto initial_values = find_initial_values
-        ( variable_metabolites
-        , target_log_counts
-        , fixed_metabolites_log_counts
-        , stoichiometric_matrix
-        , equilibrium_constants
+        ( stoichiometric_matrix
         );
 
     vector_t beta_init = std::get<0>(initial_values);
@@ -100,8 +96,6 @@ vector_t
 odds_diff
     ( const vector_t& variable_metabolites_counts
     , const vector_t& fixed_metabolites_log_counts
-    , const double mu0
-    , const matrix_t& stoichiometric_matrix
     , const matrix_t& negative_stoich_matrix
     , const matrix_t& positive_stoich_matrix
     , const vector_t& delta
@@ -231,12 +225,10 @@ run_metabolism
     }
     int num_total_metabolites = variable_metabolites.size() + fixed_metabolites_log_counts.size();
     vector_t delta = vector_t::Zero(num_total_metabolites);
-    double mu0 = 1.0;
+    //double mu0 = 1.0;
     vector_t reaction_flux = odds_diff
         ( variable_metabolites
         , fixed_metabolites_log_counts
-        , mu0
-        , stoichiometric_matrix
         , negative_stoich_matrix
         , positive_stoich_matrix
         , delta

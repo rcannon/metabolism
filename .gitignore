@@ -6,4 +6,7 @@ include/ifopt
 lib64
 share
 bin
-python/anaconda
+python/*
+python
+scratch/*
+scratch

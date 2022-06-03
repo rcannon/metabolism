@@ -10,7 +10,6 @@
 
 From the top-level directory in deception or marianas:
 ```
-$ export PROJECT_DIR=$(pwd)
 $ source env.sh
 $ bash_scripts/setup_prereqs.sh
 $ bash_scripts/build_metabolism.sh

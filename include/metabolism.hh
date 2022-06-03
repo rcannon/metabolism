@@ -30,8 +30,6 @@ vector_t
 odds_diff
     ( const vector_t& variable_metabolites_counts
     , const vector_t& fixed_metabolites_counts
-    , const double mu0
-    , const matrix_t& stoichiometric_matrix
     , const matrix_t& negative_stoich_matrix
     , const matrix_t& positive_stoich_matrix
     , const vector_t& delta

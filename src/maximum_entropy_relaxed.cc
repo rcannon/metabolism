@@ -300,13 +300,24 @@ maximum_entropy_solver
 
     
     //    save results to csv
-
     write_vector_to_csv(metabolites_sol, "../data/cpp_out/variable_metabolites.csv");
     write_vector_to_csv(flux_sol, "../data/cpp_out/fluxes.csv");
     write_vector_to_csv(steady_state_sol, "../data/cpp_out/steady_state.csv");
     write_vector_to_csv(beta_sol, "../data/cpp_out/beta.csv");
     write_vector_to_csv(h_sol, "../data/cpp_out/h_vars.csv");
     write_vector_to_csv(u_sol, "../data/cpp_out/u_vars.csv");
+
+    //
+    /*std::cout << "\n flux sol 0 " << std::setprecision(7) << flux_sol(0) << std::endl;
+    double rhs = (null_space_stoich_matrix_variable_metab_section * beta_sol)(0);
+    std::cout << "\n null_space times beta 0 " << std::setprecision(7) << rhs << std::endl;
+    std::cout << "\n diff " << std::setprecision(7) << (rhs - flux_sol(0)) << std::endl;
+    std::cout << "\n null space matrix 0" << std::endl;
+    std::cout << std::setprecision(7) << null_space_stoich_matrix_variable_metab_section.row(0) << std::endl;
+    */
+    /*for (auto elem : null_space_stoich_matrix_variable_metab_section.row(0) ) {
+        std::cout << elem << std::endl;
+    }*/
     
 
     vector_t E_regulation = vector_t::Constant(flux_sol.size(), 1.0);

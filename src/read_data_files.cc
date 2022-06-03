@@ -47,7 +47,7 @@ load_concentrations( const std::string& path)
 
     // read numtot
     std::getline(indata, line);
-    num_total = std::stoi(line);
+    //num_total = std::stoi(line);
 
     // read concentrations vector
     while (std::getline(indata, line)) {
