@@ -10,3 +10,5 @@ python/*
 python
 scratch/*
 scratch
+.vscode/*
+.vscode

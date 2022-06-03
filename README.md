@@ -1,8 +1,11 @@
 
 ## Contents
-[Installing and Running](#installation-and-running))
+[Installing and Running](#installation-and-running)
+
 [Cleaning](#cleaning)
+
 [Bash Scripts](#bash-scripts)
+
 [Notes](#notes)
 
 
