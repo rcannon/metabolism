@@ -1,61 +1,29 @@
 
 
 ****************************************************************************
-USAGE NOTES
+IFOPT/EIGEN USAGE NOTES
 ****************************************************************************
 
-DO NOT EVER USE auto types with eigen
-    - https://stackoverflow.com/questions/29231798/eigen-how-to-make-a-deep-copy-of-a-matrix
+The types `matrix_t` and `vector_t` are aliases for Eigen types that I created to decrease verbosity.
+See `include/includes_and_types.hh`.
 
-ifopt does not do variable indices like pyomo. This came up when 
-    separating the variable metabolites from the fixed metabolites and also
-    when fitting the target_counts to be the same size as the variable metabolites.
-    The python code seemed to just select the variable metabolites from the
-    front of the array, so this is what I did.
+Don't declare variables that hold eigen objects using `auto`.
+For more details: https://stackoverflow.com/questions/29231798/eigen-how-to-make-a-deep-copy-of-a-matrix
 
-eigen objects of fixed size and any object that contains an eigin object of fixed size MUST be 
-    passed by reference and never by value. or else memory become unaligned. 
-    Returning by value is fine though.
+Fixed-size eigen objects and objects (structs,classes) that contain fixed-size Eigen objects must 
+be passed by reference to ensure correct memory alignment. They may be returned by value though.
 
-when we are assigning a matrix expression to a matrix that appears
-    in the expression, be sure to call .eval() on the RHS.
-    Ex. A = A * B; should be A = (A * B).eval();
+When we are assigning a matrix expression to a matrix that appears
+in the expression, be sure to call .eval() on the RHS.
+Ex. A = A * B; should be A = (A * B).eval();
 
-matrix_t A = B; performs a deep copy of B into A.
+To do a deep copy of an Eigen object into a new variable, just
+declare a new variable with an explicit typematrix_t A = B; performs a deep copy of B into A.
 
-numpy array operation * is elementwise
-
-eigen is lazy.
-    - use .eval() to force strict evaluation of RHS.
-    - this is particularly important for aliasing.
-    - HOWEVER, component-wise operations are safe regardless
-        and don't require forced evaluation.
-        - "In general, an assignment is safe if the (i,j) 
-            entry of the expression on the right-hand side 
-            depends only on the (i,j) entry of the matrix or 
-            array on the left-hand side and not on any other entries"
-
-eigen in general does not perform operations in-place.
-    - when an in-place alternative for func() exist, 
-        it is usually called funcInPlace().
-
-
-eigen matrix.reshaped() or .resize()?
-    resize changes the matrix in place,
-        whereas reshaped returns a new matrix.
-    no way to specify coefficient order for resize.
-    *resizing (both increasing and decreasing total 
-        number of coefficients) will delete the current
-        coefficients (replace with zeros) UNLESS the 
-        total number of coefficients is unchanged.
-
-matrix types only support linear -algebra operations, for 
-    component wise operations, one must first call the matrix.array()
-    to convert the matrix to an array.
-    At the end of the operations, one then must call .matrix() 
-    to convert the array back into a mtraix.
-    
-
-
-
+Eigen matrix and vector types only support linear-agebra operations.
+In order to perform component wise/ pytorch tensor operations, call the
+.array() method first.
+Ex. Get component-wise inverse
+    Bad:    my_matrix.inverse()  // returns inverse of matrix A^(-1)
+    Good:   my_matrix.array().inverse() // returns matrix where a_ij is now 1/a_ij
     
